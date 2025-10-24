@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamepedia | Sua Enciclopédia de Videogames</title>
+    <link rel="stylesheet" href="css/style.css"> 
+</head>
+<body class="dark-mode"> <header id="global-header">
+        <div class="container header-content">
+            <div class="marca">Gamepedia</div>
+            <nav>
+                <a href="index.html">Início</a>
+                <a href="favoritos.html">Favoritos</a>
+            </nav>
+            
+            <form id="search-form" class="search-bar">
+                <input type="text" id="search-input" placeholder="Buscar jogos, gêneros..." required>
+                <button type="submit">🔍</button>
+            </form>
+            
+            <a href="login.html" class="btn-login">Entrar</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <h2>🎮 Lançamentos da Semana</h2>
+        </section>
+
+        <h2>🔥 Jogos Populares</h2>
+        <section id="popular-games" class="game-list">
+            </section>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <small>&copy; Direitos Autorais Gamepedia</small>
+            <small>Dados fornecidos por <a href="https://rawg.io/apidocs" target="_blank">RAWG API</a> [cite: 29]</small>
+            <button id="theme-toggle" aria-label="Alternar tema">
+                <img id="theme-icon" src="assets/images/sun-icon.svg" alt="Ícone de Sol/Lua"> 
+            </button>
+        </div>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>

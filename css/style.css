@@ -1,0 +1,162 @@
+/* Estilos de Tipografia do Gamepedia (se fossem usados): 
+   font-family: 'Orbitron' (Títulos) e 'Poppins' (Corpo)[cite: 25, 26]. 
+   No entanto, mantemos Arial/Helvetica do seu arquivo para consistência.
+*/
+
+:root {
+    /* Cores primárias do estilo existente */
+    --primary-bg: #f7f7f7;
+    --primary-text: #333;
+    --secondary-bg: #fff;
+    --accent-color: #222; /* Cor de acento: preto do Header */
+}
+
+.dark-mode {
+    /* Dark Mode (Padrão) [cite: 22] - Adaptado ao seu estilo */
+    --primary-bg: #151515; /* Fundo */
+    --primary-text: #EAEAEA; /* Texto */
+    --secondary-bg: #1F1F1F; /* Cards */
+    --accent-color: #9146FF; /* Acento */
+}
+
+/* Aplicação das cores do tema no body */
+body {
+    background-color: var(--primary-bg);
+    color: var(--primary-text);
+}
+
+header {
+    background: var(--accent-color); /* Header usa a cor de acento */
+}
+
+main {
+    background: var(--secondary-bg); /* Main/Cards usam a cor secundária */
+    border-color: #333; /* Borda ajustada para Dark Mode se necessário */
+}
+
+/* ------------------------------------------------ */
+/*     ADIÇÕES DO GAMEPEDIA: COMPONENTES GLOBAIS */
+/* ------------------------------------------------ */
+
+header .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+header .marca {
+    margin-bottom: 0;
+}
+
+/* Barra de Busca  */
+.search-bar {
+    display: flex;
+    flex-grow: 1; /* Cresce no meio */
+    max-width: 400px;
+    margin: 0 40px;
+}
+
+.search-bar input {
+    flex-grow: 1;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 20px 0 0 20px;
+    background-color: #333;
+    color: #fff;
+}
+
+.search-bar button {
+    background: #444;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 0 20px 20px 0;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+/* Footer [cite: 29] */
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#theme-toggle {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+#theme-icon {
+    width: 24px;
+    height: 24px;
+}
+
+
+/* ------------------------------------------------ */
+/*       ADIÇÕES DO GAMEPEDIA: GAME CARD  */
+/* ------------------------------------------------ */
+
+.game-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.game-card {
+    background: var(--secondary-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    cursor: pointer; /* Clicável para detalhes  */
+    border: 1px solid #e8e8e8;
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.card-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.card-info {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+    color: var(--accent-color);
+}
+
+.card-platforms {
+    font-size: 0.9em;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.card-rating {
+    display: inline-block;
+    background: #ffc107;
+    color: #333;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.8em;
+}
+
+.favorite-icon {
+    float: right;
+    font-size: 1.5em;
+    color: var(--accent-color); /* Usa a cor de acento */
+    cursor: pointer;
+}
