@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Gamepedia | Detalhes do Jogo</title>
+    <link rel="stylesheet" href="css/style.css"> 
+</head>
+<body class="dark-mode"> 
+    
+    <header id="global-header">
+        <div class="container header-content">
+            <div class="marca">Gamepedia</div>
+            <nav>
+                <a href="index.html">Início</a>
+                <a href="favoritos.html">Favoritos</a>
+            </nav>
+            <form id="search-form" class="search-bar">
+                <input type="text" id="search-input" placeholder="Buscar jogos, gêneros..." required>
+                <button type="submit">🔍</button>
+            </form>
+            <a href="login.html" class="btn-login">Entrar</a>
+        </div>
+    </header>
+
+    <main class="container detalhes-main">
+        <div id="loading-message">
+            <h2>Carregando detalhes do jogo...</h2>
+        </div>
+        
+        <section id="game-details-content" style="display: none;">
+            <div class="detail-header">
+                <h1 id="game-title">Nome do Jogo</h1>
+                <button id="favorite-toggle" class="favorite-btn" aria-label="Adicionar aos favoritos">
+                    <span id="favorite-icon">🤍</span>
+                </button>
+            </div>
+
+            <div class="detail-metadata">
+                <span id="game-rating" class="rating-tag">⭐ N/A</span> |
+                <span id="game-release">Lançamento: N/A</span> |
+                <span id="game-genres">Gêneros: N/A</span>
+            </div>
+
+            <div class="detail-body">
+                <img id="game-cover" src="assets/images/placeholder.jpg" alt="Capa do Jogo" class="detail-cover">
+                <div class="detail-description">
+                    <h3>Descrição</h3>
+                    <p id="game-summary"></p>
+                </div>
+            </div>
+
+            <h2 class="section-title">Plataformas</h2>
+            <p id="game-platforms"></p>
+
+            <h2 class="section-title">Screenshots</h2>
+            <div id="screenshots-gallery" class="gallery-grid">
+                </div>
+            
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <small>&copy; Direitos Autorais Gamepedia</small>
+            <small>Dados fornecidos por <a href="https://www.igdb.com/api" target="_blank">IGDB API</a></small>
+            <button id="theme-toggle" aria-label="Alternar tema">☀️</button>
+        </div>
+    </footer>
+    
+    <script src="js/script.js"></script>
+</body>
+</html>

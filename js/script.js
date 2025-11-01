@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // ATENÇÃO: ESTES VALORES DEVEM SER GERADOS POR VOCÊ NA TWITCH/IGDB.
     // O TOKEN expira, você deve gerar um novo periodicamente para testes.
-    const IGDB_CLIENT_ID = 'abcdefg12345'; 
-    const IGDB_BEARER_TOKEN = 'Bearer access12345token'; 
+    const IGDB_CLIENT_ID = 'botc0vhk45urrf6f0m4tpzrwj5hfho'; 
+    const IGDB_BEARER_TOKEN = '6j91yllr9he5d9o5vyq2crjhrpwtpc'; 
     const IGDB_URL = 'https://api.igdb.com/v4/';
 
     /**

@@ -160,3 +160,72 @@ header .marca {
     color: var(--accent-color); /* Usa a cor de acento */
     cursor: pointer;
 }
+
+.detalhes-main {
+    padding-top: 40px;
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.detail-header h1 {
+    font-size: 2.5em;
+    color: var(--accent-color);
+    margin: 0;
+}
+
+.favorite-btn {
+    background: transparent;
+    border: none;
+    font-size: 2.5em;
+    cursor: pointer;
+    padding: 0;
+}
+
+.detail-metadata {
+    font-size: 1em;
+    color: var(--color-text-secondary, #666);
+    margin-bottom: 25px;
+}
+
+.detail-body {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.detail-cover {
+    width: 300px; 
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.detail-description h3 {
+    color: var(--accent-color);
+}
+
+.section-title {
+    font-size: 1.8em;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #e8e8e8;
+    padding-bottom: 5px;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.screenshot-img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
