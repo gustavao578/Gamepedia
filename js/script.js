@@ -6,17 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. CONFIGURAÇÃO DA API IGDB (Funções de Serviço)
     // ==================================================================
     
-    // ATENÇÃO: ESTES VALORES DEVEM SER GERADOS POR VOCÊ NA TWITCH/IGDB.
-    // O TOKEN expira, você deve gerar um novo periodicamente para testes.
-    const IGDB_CLIENT_ID = 'botc0vhk45urrf6f0m4tpzrwj5hfho'; 
-    const IGDB_BEARER_TOKEN = '6j91yllr9he5d9o5vyq2crjhrpwtpc'; 
+    // 🛑 AÇÃO NECESSÁRIA: SUBSTITUA POR SUAS CREDENCIAIS REAIS DA TWITCH/IGDB
+    const IGDB_CLIENT_ID = 'botc0vhk45urrf6f0m4tpzrwj5hfho'; // <-- SUBSTITUIR
+    const IGDB_BEARER_TOKEN = 'Bearer '; // <-- SUBSTITUIR
     const IGDB_URL = 'https://api.igdb.com/v4/';
 
     /**
      * Função genérica para buscar dados da API IGDB.
-     * A IGDB usa POST para consultas complexas com corpo 'data'.
      * @param {string} endpoint - O endpoint da API (ex: 'games', 'genres').
-     * @param {string} adata - A string de consulta no formato 'APICALYPSE' (ex: 'fields name, rating; limit 10;').
+     * @param {string} data - A string de consulta no formato 'APICALYPSE'.
      */
     async function fetchData(endpoint, data) {
         const url = IGDB_URL + endpoint;
@@ -25,49 +23,39 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    // IGDB requer o Client-ID e o Token nos cabeçalhos
                     'Client-ID': IGDB_CLIENT_ID,
                     'Authorization': IGDB_BEARER_TOKEN,
                     'Accept': 'application/json',
                 },
-                body: data, // O corpo contém a consulta da API
+                body: data, 
             });
             
             if (!response.ok) {
-                console.error(`Erro na API IGDB: ${response.status}`);
-                return null;
+                // Tratamento de erro detalhado
+                const errorText = await response.text();
+                console.error(`Erro na API IGDB (Status: ${response.status}):`, errorText);
+                return { error: `Erro de API: Status ${response.status} - Verifique o console para detalhes.` };
             }
             
             return await response.json();
         } catch (error) {
-            console.error(`Falha ao buscar dados em /${endpoint}:`, error);
-            return null; 
+            console.error(`Falha na requisição ao endpoint /${endpoint}:`, error);
+            return { error: `Falha na Requisição: ${error.message}` };
         }
     }
     
-    /**
-     * Função para buscar jogos populares (para index.html).
-     * Nota: IGDB usa 'platforms', 'cover', etc., que requerem chamadas adicionais ou sintaxe complexa.
-     * Simplificado para o front-end.
-     */
     async function getPopularGames() {
-        // Consulta para 8 jogos populares, com campos essenciais e o slug para o detalhe
         const query = 'fields name, rating, platforms.name, cover.url, slug; sort popularity desc; limit 8; where rating_count > 10;';
         return fetchData('games', query);
     }
 
-    /**
-     * Função para buscar jogos por termo (para resultados.html).
-     */
     async function searchGames(query) {
-        // Consulta para 20 resultados de busca
         const queryData = `fields name, rating, platforms.name, cover.url, slug; search "${query}"; limit 20;`;
         return fetchData('games', queryData);
     }
-
-
+    
     // ==================================================================
-    // 2. CONFIGURAÇÃO INICIAL E LOCAL STORAGE (MANTIDA)
+    // 2. CONFIGURAÇÃO INICIAL E LOCAL STORAGE (Mantido)
     // ==================================================================
     
     if (!localStorage.getItem('gamepedia_favorites')) {
@@ -78,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==================================================================
-    // 3. LÓGICA DE TEMA (MANTIDA)
+    // 3. LÓGICA DE TEMA (Mantido)
     // ==================================================================
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
@@ -107,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadTheme();
     
     // ==================================================================
-    // 4. LÓGICA DE BUSCA E REDIRECIONAMENTO (MANTIDA)
+    // 4. LÓGICA DE BUSCA E REDIRECIONAMENTO (Mantido)
     // ==================================================================
     const searchForm = document.getElementById('search-form');
     const searchInput = document.getElementById('search-input');
@@ -119,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (searchTerm) {
                 saveSearchTerm(searchTerm);
-                // Redireciona para 'resultados.html?search=termo'
                 window.location.href = `resultados.html?search=${encodeURIComponent(searchTerm)}`;
             }
         });
@@ -136,16 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // ==================================================================
-    // 5. RENDERIZAÇÃO ESPECÍFICA DE PÁGINAS (ADAPTADA À RESPOSTA IGDB)
+    // 5. RENDERIZAÇÃO ESPECÍFICA DE PÁGINAS (Com Feedback de Erro)
     // ==================================================================
     
-    // Função para criar o URL completo da capa (IGDB fornece apenas o ID/caminho parcial)
     function getCoverUrl(coverUrl) {
-        // A IGDB geralmente retorna URLs sem o protocolo ou um caminho relativo.
-        // Simulamos uma URL de imagem comum para a IGDB (que usa o Imgur/Twitch CDN)
         if (coverUrl) {
-             // O URL retornado pela IGDB muitas vezes já é completo
-             return 'https:' + coverUrl.replace('t_thumb', 't_cover_big'); // Substitui o thumbnail por uma capa maior
+             return 'https:' + coverUrl.replace('t_thumb', 't_cover_big');
         }
         return 'assets/images/placeholder.jpg';
     }
@@ -158,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
              popularGamesContainer.innerHTML = '<h3>Carregando jogos populares (via IGDB)...</h3>';
              const data = await getPopularGames(); 
         
-             if (data && data.length > 0) {
+             if (data && !data.error && data.length > 0) { // Verifica se não houve erro e se há dados
                  popularGamesContainer.innerHTML = data.map(game => `
                     <div class="game-card" data-id="${game.id}" onclick="window.location.href='detalhes.html?slug=${game.slug}'"> 
                         <img src="${game.cover ? getCoverUrl(game.cover.url) : 'assets/images/placeholder.jpg'}" alt="${game.name}" class="card-image">
@@ -171,12 +154,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `).join('');
             } else {
-                 popularGamesContainer.innerHTML = `<h3>Erro ao carregar jogos populares. Verifique seu Client-ID e Bearer Token no script.js.</h3>`;
+                // FEEDBACK CLARO DE ERRO NA TELA
+                const errorMessage = data && data.error ? data.error : "Dados vazios. Verifique se a query IGDB retornou resultados.";
+                popularGamesContainer.innerHTML = `
+                    <h3 style="color: red;">❌ Erro de Integração da API ❌</h3>
+                    <p>O Gamepedia não conseguiu carregar os dados. Isso geralmente acontece por:</p>
+                    <ul style="list-style-type: disc; padding-left: 20px; color: var(--primary-text);">
+                        <li>1. **Token Expirado/Inválido:** Você precisa gerar um novo Bearer Token na Twitch.</li>
+                        <li>2. **Credenciais Erradas:** Verifique se o Client ID e o Token estão inseridos corretamente no topo do <strong>script.js</strong>.</li>
+                        <li><small>Detalhes Técnicos: ${errorMessage}</small></li>
+                    </ul>
+                `;
             }
         }
     }
 
-    // B) Lógica da Página de Resultados (resultados.html)
+    // B) Lógica da Página de Resultados (resultados.html) - Mantida para consistência
     async function renderResultsPage() {
         if (window.location.pathname.endsWith('resultados.html')) {
             const resultsContainer = document.getElementById('results-list');
@@ -190,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     resultsContainer.innerHTML = '<h3>Buscando por: ' + searchTerm + ' (via IGDB)...</h3>';
                     const data = await searchGames(searchTerm);
 
-                    if (data && data.length > 0) {
+                    if (data && !data.error && data.length > 0) {
                         resultsContainer.innerHTML = data.map(game => `
                             <div class="game-card" data-id="${game.id}" onclick="window.location.href='detalhes.html?slug=${game.slug}'"> 
                                 <img src="${game.cover ? getCoverUrl(game.cover.url) : 'assets/images/placeholder.jpg'}" alt="${game.name}" class="card-image">
@@ -203,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         `).join('');
                     } else {
-                        resultsContainer.innerHTML = '<h3>Nenhum resultado encontrado para "' + searchTerm + '".</h3>';
+                        resultsContainer.innerHTML = '<h3>Nenhum resultado encontrado ou falha na API.</h3>';
                     }
                 } else {
                     resultsContainer.innerHTML = '<h3>Utilize a barra de busca acima para encontrar jogos.</h3>';

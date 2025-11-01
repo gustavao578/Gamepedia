@@ -229,3 +229,85 @@ header .marca {
     height: auto;
     border-radius: 4px;
 }
+
+/* --- ADIÇÕES NO style.css PARA LOGIN E CADASTRO --- */
+
+/* Oculta header/footer nas páginas de formulário */
+header, footer {
+    display: none; 
+}
+
+/* Sobrescreve a regra geral do body para centralizar o formulário */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--primary-bg); 
+    color: var(--primary-text);
+}
+
+.auth-container {
+    background: var(--secondary-bg); 
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.auth-container h1 {
+    color: var(--accent-color);
+    margin-bottom: 25px;
+    font-size: 2em;
+}
+
+.auth-container input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--primary-text); 
+    border-radius: 5px;
+    background-color: transparent;
+    color: var(--primary-text);
+    box-sizing: border-box;
+}
+
+.auth-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.form-links {
+    margin-top: 20px;
+    font-size: 0.9em;
+}
+
+.form-links a {
+    color: var(--accent-color);
+    text-decoration: none;
+    display: block;
+    margin-top: 10px;
+}
+
+.form-links a:hover {
+    text-decoration: underline;
+}
+
+.home-link {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: bold;
+}
