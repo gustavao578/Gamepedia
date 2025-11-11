@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gamepedia | Meus Favoritos</title>
+    <title>Gamepedia | Resultados de Busca</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body class="dark-mode">
@@ -24,17 +24,32 @@
     </header>
 
     <main class="container">
-        <h2>❤️ Meus Jogos Favoritos</h2>
+        <h1 id="search-title">Resultados para: <span id="search-term"></span></h1>
 
-        <section id="favorites-list" class="game-list">
-            <p>Carregando...</p>
+        <div class="filters-panel">
+            <div class="filter-group">
+                <label for="genre-filter">Filtrar por Gênero:</label>
+                <select id="genre-filter">
+                    <option value="">Todos os Gêneros</option>
+                    <option value="RPG">RPG</option>
+                    <option value="Action">Ação</option>
+                    <option value="Strategy">Estratégia</option>
+                    <option value="Racing">Corrida</option>
+                    <option value="Indie">Indie</option>
+                </select>
+            </div>
+        </div>
+
+        <section id="results-list" class="game-list">
+            <h3>Carregando resultados...</h3>
         </section>
 
-        <div id="empty-message" style="display: none; text-align: center; padding: 60px 20px;">
-            <h3 style="font-size: 2em; margin-bottom: 15px;">💔 Lista Vazia</h3>
-            <p style="margin-bottom: 20px; color: var(--color-text-secondary);">Você ainda não tem jogos favoritados. Explore e adicione seus favoritos!</p>
-            <a href="index.html" style="color: var(--accent-color); font-weight: bold; font-size: 1.1em;">Explorar Jogos →</a>
+        <div id="empty-results" style="display: none; text-align: center; padding: 50px;">
+            <h3>Nenhum jogo encontrado!</h3>
+            <p>Tente buscar por outro termo ou explore nossos favoritos.</p>
+            <a href="index.html" style="color: var(--accent-color); font-weight: bold; margin-top: 15px; display: inline-block;">← Voltar ao Início</a>
         </div>
+
     </main>
 
     <footer>
@@ -47,6 +62,6 @@
 
     <script src="assets/js/services/api.js"></script>
     <script src="assets/js/main.js"></script>
-    <script src="assets/js/pages/favoritos.js"></script>
+    <script src="assets/js/pages/resultados.js"></script>
 </body>
 </html>

@@ -4,40 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gamepedia | Sua Enciclopédia de Videogames</title>
-    <link rel="stylesheet" href="css/style.css"> 
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="dark-mode"> <header id="global-header">
+<body class="dark-mode">
+
+    <header id="global-header">
         <div class="container header-content">
-            <div class="marca">Gamepedia</div>
+            <div class="marca">🎮 Gamepedia</div>
             <nav>
                 <a href="index.html">Início</a>
                 <a href="favoritos.html">Favoritos</a>
             </nav>
-            
             <form id="search-form" class="search-bar">
-                <input type="text" id="search-input" placeholder="Buscar jogos, gêneros..." required>
+                <input type="text" id="search-input" placeholder="Buscar jogos..." required>
                 <button type="submit">🔍</button>
             </form>
-            
-            <a href="login.html" class="btn-login">Entrar</a>
+            <button id="theme-toggle" aria-label="Alternar tema">☀️</button>
         </div>
     </header>
 
     <main class="container">
-        <h2>🎮 Lançamentos da Semana</h2>
+        <h2>🚀 Lançamentos Recentes</h2>
+        <section id="recent-games" class="game-list">
+            <p>Carregando...</p>
         </section>
 
         <h2>🔥 Jogos Populares</h2>
         <section id="popular-games" class="game-list">
-            </section>
+            <p>Carregando...</p>
+        </section>
     </main>
 
     <footer>
         <div class="container footer-content">
-            <small>&copy; Direitos Autorais Gamepedia</small>
+            <small>&copy; 2025 Gamepedia. Todos os direitos reservados.</small>
+            <small>Dados fornecidos por <a href="https://www.igdb.com/api" target="_blank">IGDB API</a></small>
+            <button id="theme-toggle-footer" aria-label="Alternar tema">🌙</button>
         </div>
     </footer>
-    
-    <script src="/js/script.js"></script>
+
+    <script src="assets/js/services/api.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/pages/index.js"></script>
 </body>
 </html>

@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "name": "The Legend of Zelda: Breath of the Wild",
+    "summary": "Um jogo de aventura e ação revolucionário que reinventou a série Zelda com exploração livre.",
+    "cover_url": "https://images.igdb.com/igdb/image/scale_thumb/co23qc.jpg",
+    "rating": 97,
+    "release_date": 1489052400,
+    "genres": ["Adventure", "Action"],
+    "platforms": ["Nintendo Switch"],
+    "developer": "Nintendo EPD",
+    "release_year": 2017
+  },
+  {
+    "id": 2,
+    "name": "The Witcher 3: Wild Hunt",
+    "summary": "Um RPG épico com histórias envolventes, personagens memoráveis e um mundo aberto vasto.",
+    "cover_url": "https://images.igdb.com/igdb/image/scale_thumb/co1wyy.jpg",
+    "rating": 92,
+    "release_date": 1431990000,
+    "genres": ["RPG", "Action"],
+    "platforms": ["PlayStation 4", "Xbox One", "PC"],
+    "developer": "CD Projekt Red",
+    "release_year": 2015
+  },
+  {
+    "id": 3,
+    "name": "Elden Ring",
+    "summary": "Uma aventura desafiadora de fantasia sombria criada por FromSoftware em colaboração com George R.R. Martin.",
+    "cover_url": "https://images.igdb.com/igdb/image/scale_thumb/co5ma7.jpg",
+    "rating": 96,
+    "release_date": 1645056000,
+    "genres": ["RPG", "Action"],
+    "platforms": ["PlayStation 5", "Xbox Series X", "PC"],
+    "developer": "FromSoftware",
+    "release_year": 2022
+  },
+  {
+    "id": 4,
+    "name": "Cyberpunk 2077",
+    "summary": "Um RPG de ação futurista ambientado em um mundo aberto imersivo chamado Night City.",
+    "cover_url": "https://images.igdb.com/igdb/image/scale_thumb/co2kb5.jpg",
+    "rating": 75,
+    "release_date": 1607558400,
+    "genres": ["RPG", "Action"],
+    "platforms": ["PlayStation 4", "Xbox One", "PC"],
+    "developer": "CD Projekt Red",
+    "release_year": 2020
+  },
+  {
+    "id": 5,
+    "name": "Hades",
+    "summary": "Um jogo indie roguelike com ação rápida, história envolvente e arte memorável.",
+    "cover_url": "https://images.igdb.com/igdb/image/scale_thumb/co23ay.jpg",
+    "rating": 91,
+    "release_date": 1600560000,
+    "genres": ["Action", "Indie"],
+    "platforms": ["Nintendo Switch", "PC", "PlayStation 4"],
+    "developer": "Supergiant Games",
+    "release_year": 2020
+  },
+  {
+    "id": 6,
+    "name": "Starfield",
+    "summary": "Uma aventura de exploração espacial e RPG da Bethesda com liberdade de escolha.",
+    "cover_url": "https://images.igdb.com/igdb/image/scale_thumb/co6i42.jpg",
+    "rating": 83,
+    "release_date": 1694736000,
+    "genres": ["RPG", "Adventure"],
+    "platforms": ["Xbox Series X", "PC"],
+    "developer": "Bethesda Game Studios",
+    "release_year": 2023
+  },
+  {
+    "id": 7,
+    "name": "Hollow Knight",
+    "summary": "Um jogo de plataforma metroidvania com arte impressionante e desafios únicos.",
+    "cover_url": "https://images.igdb.com/igdb/image/scale_thumb/co1r64.jpg",
+    "rating": 88,
+    "release_date": 1502150400,
+    "genres": ["Action", "Indie"],
+    "platforms": ["Nintendo Switch", "PC"],
+    "developer": "Team Cherry",
+    "release_year": 2017
+  },
+  {
+    "id": 8,
+    "name": "Dark Souls III",
+    "summary": "Um jogo de ação desafiador de fantasia sombria com mecânicas punidoras.",
+    "cover_url": "https://images.igdb.com/igdb/image/scale_thumb/co1r7j.jpg",
+    "rating": 89,
+    "release_date": 1459641600,
+    "genres": ["RPG", "Action"],
+    "platforms": ["PlayStation 4", "Xbox One", "PC"],
+    "developer": "FromSoftware",
+    "release_year": 2016
+  }
+]

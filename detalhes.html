@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title">Gamepedia | Detalhes do Jogo</title>
-    <link rel="stylesheet" href="css/style.css"> 
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="dark-mode"> 
-    
+<body class="dark-mode">
+
     <header id="global-header">
         <div class="container header-content">
-            <div class="marca">Gamepedia</div>
+            <div class="marca">🎮 Gamepedia</div>
             <nav>
                 <a href="index.html">Início</a>
                 <a href="favoritos.html">Favoritos</a>
             </nav>
             <form id="search-form" class="search-bar">
-                <input type="text" id="search-input" placeholder="Buscar jogos, gêneros..." required>
+                <input type="text" id="search-input" placeholder="Buscar jogos..." required>
                 <button type="submit">🔍</button>
             </form>
-            <a href="login.html" class="btn-login">Entrar</a>
+            <button id="theme-toggle" aria-label="Alternar tema">☀️</button>
         </div>
     </header>
 
@@ -27,48 +27,56 @@
         <div id="loading-message">
             <h2>Carregando detalhes do jogo...</h2>
         </div>
-        
+
         <section id="game-details-content" style="display: none;">
+
             <div class="detail-header">
                 <h1 id="game-title">Nome do Jogo</h1>
                 <button id="favorite-toggle" class="favorite-btn" aria-label="Adicionar aos favoritos">
-                    <span id="favorite-icon">🤍</span>
+                    <span id="favorite-icon">🤍</span> Favoritar
                 </button>
             </div>
 
             <div class="detail-metadata">
-                <span id="game-rating" class="rating-tag">⭐ N/A</span> |
-                <span id="game-release">Lançamento: N/A</span> |
+                <span id="game-rating" class="rating-tag">⭐ N/A</span>
+                <span id="game-release">Lançamento: N/A</span>
                 <span id="game-genres">Gêneros: N/A</span>
             </div>
 
             <div class="detail-body">
-                <img id="game-cover" src="assets/images/placeholder.jpg" alt="Capa do Jogo" class="detail-cover">
+                <img id="game-cover" src="https://via.placeholder.com/300x400?text=No+Image" alt="Capa do Jogo" class="detail-cover">
                 <div class="detail-description">
-                    <h3>Descrição</h3>
-                    <p id="game-summary"></p>
+                    <div>
+                        <h3 class="section-title">📖 Resumo</h3>
+                        <p id="game-summary">Sem descrição disponível.</p>
+                    </div>
+
+                    <div>
+                        <h3 class="section-title">🖥️ Plataformas</h3>
+                        <p id="game-platforms">N/A</p>
+                    </div>
+
+                    <div>
+                        <h3 class="section-title">👨‍💼 Desenvolvedora</h3>
+                        <p id="game-developer">N/A</p>
+                    </div>
                 </div>
             </div>
 
-            <h2 class="section-title">Plataformas</h2>
-            <p id="game-platforms"></p>
-
-            <h2 class="section-title">Screenshots</h2>
-            <div id="screenshots-gallery" class="gallery-grid">
-                </div>
-            
         </section>
 
     </main>
 
     <footer>
         <div class="container footer-content">
-            <small>&copy; Direitos Autorais Gamepedia</small>
+            <small>&copy; 2025 Gamepedia. Todos os direitos reservados.</small>
             <small>Dados fornecidos por <a href="https://www.igdb.com/api" target="_blank">IGDB API</a></small>
-            <button id="theme-toggle" aria-label="Alternar tema">☀️</button>
+            <button id="theme-toggle-footer" aria-label="Alternar tema">🌙</button>
         </div>
     </footer>
-    
-    <script src="js/script.js"></script>
+
+    <script src="assets/js/services/api.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/pages/detalhes.js"></script>
 </body>
 </html>
