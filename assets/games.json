@@ -1,0 +1,46 @@
+[
+    {
+        "id": 1,
+        "name": "The Cyberpunk Saga",
+        "slug": "the-cyberpunk-saga",
+        "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co4148.jpg",
+        "rating": 4.5,
+        "genres": ["RPG", "Ação"],
+        "platforms": ["PC", "PS5"],
+        "summary": "Um RPG de mundo aberto futurista focado em escolhas morais e narrativa profunda.",
+        "release_date": 1607558400 
+    },
+    {
+        "id": 2,
+        "name": "Fantasy Kingdom V",
+        "slug": "fantasy-kingdom-v",
+        "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co1x4n.jpg",
+        "rating": 3.9,
+        "genres": ["Estratégia", "Simulação"],
+        "platforms": ["PC"],
+        "summary": "Construa e gerencie seu próprio reino em um mundo de fantasia medieval.",
+        "release_date": 1640995200 
+    },
+    {
+        "id": 3,
+        "name": "Galactic Racer",
+        "slug": "galactic-racer",
+        "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co43g7.jpg",
+        "rating": 4.8,
+        "genres": ["Corrida", "Arcade"],
+        "platforms": ["PS5", "Xbox Series"],
+        "summary": "Corridas de alta velocidade em planetas exóticos com naves futuristas.",
+        "release_date": 1672531200
+    },
+    {
+        "id": 4,
+        "name": "Mystic Dungeon",
+        "slug": "mystic-dungeon",
+        "cover_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co2961.jpg",
+        "rating": 3.5,
+        "genres": ["Indie", "Quebra-Cabeça"],
+        "platforms": ["PC", "Switch"],
+        "summary": "Explore masmorras misteriosas resolvendo enigmas complexos.",
+        "release_date": 1693526400 
+    }
+]

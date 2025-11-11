@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamepedia | Meus Favoritos</title>
+    <link rel="stylesheet" href="css/style.css"> 
+</head>
+<body class="dark-mode"> 
+    
+    <header id="global-header">
+        <div class="container header-content">
+            <div class="marca">Gamepedia</div>
+            <nav>
+                <a href="index.html">Início</a>
+                <a href="favoritos.html">Favoritos</a>
+            </nav>
+            <form id="search-form" class="search-bar">
+                <input type="text" id="search-input" placeholder="Buscar jogos, gêneros..." required>
+                <button type="submit">🔍</button>
+            </form>
+            <a href="login.html" class="btn-login">Entrar</a>
+        </div>
+    </header>
+
+    <main class="container">
+        <h2>❤️ Meus Jogos Favoritos</h2>
+        
+        <section id="favorites-list" class="game-list">
+            <h3>Carregando lista de favoritos...</h3>
+        </section>
+
+        <div id="empty-message" style="display: none; text-align: center; padding: 50px;">
+             <h3>Sua lista de favoritos está vazia!</h3>
+             <p>Comece a explorar a Gamepedia para encontrar seus jogos preferidos e adicioná-los aqui.</p>
+             <a href="index.html" style="color: var(--accent-color); font-weight: bold; margin-top: 15px; display: block;">Explorar Jogos</a>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <small>&copy; Direitos Autorais Gamepedia</small>
+            <small>Dados fornecidos por <a href="https://www.igdb.com/api" target="_blank">IGDB API</a></small>
+            <button id="theme-toggle" aria-label="Alternar tema">☀️</button>
+        </div>
+    </footer>
+    
+    <script src="js/script.js"></script>
+</body>
+</html>

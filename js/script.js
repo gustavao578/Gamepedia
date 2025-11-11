@@ -6,15 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. CONFIGURAÇÃO DA API IGDB (Funções de Serviço)
     // ==================================================================
     
-    // 🛑 AÇÃO NECESSÁRIA: SUBSTITUA POR SUAS CREDENCIAIS REAIS DA TWITCH/IGDB
-    const IGDB_CLIENT_ID = 'botc0vhk45urrf6f0m4tpzrwj5hfho'; // <-- SUBSTITUIR
-    const IGDB_BEARER_TOKEN = 'Bearer '; // <-- SUBSTITUIR
+    // 🛑 AÇÃO CRÍTICA: SUBSTITUA POR SUAS CREDENCIAIS REAIS DA TWITCH/IGDB
+    // ID do cliente (Client ID)
+    const IGDB_CLIENT_ID = 'botc0vhk45urrf6f0m4tpzrwj5hfho'; 
+    // Bearer Token: Deve ser gerado usando o Client Secret (e expira)
+    const IGDB_BEARER_TOKEN = 'Bearer SEU_NOVO_TOKEN_MUITO_LONGO_AQUI_...'; 
     const IGDB_URL = 'https://api.igdb.com/v4/';
 
     /**
      * Função genérica para buscar dados da API IGDB.
-     * @param {string} endpoint - O endpoint da API (ex: 'games', 'genres').
-     * @param {string} data - A string de consulta no formato 'APICALYPSE'.
      */
     async function fetchData(endpoint, data) {
         const url = IGDB_URL + endpoint;
@@ -31,10 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             
             if (!response.ok) {
-                // Tratamento de erro detalhado
                 const errorText = await response.text();
                 console.error(`Erro na API IGDB (Status: ${response.status}):`, errorText);
-                return { error: `Erro de API: Status ${response.status} - Verifique o console para detalhes.` };
+                return { error: `Erro de API: Status ${response.status} - Verifique o console.` };
             }
             
             return await response.json();
@@ -44,18 +43,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    // Funções de Consulta
     async function getPopularGames() {
         const query = 'fields name, rating, platforms.name, cover.url, slug; sort popularity desc; limit 8; where rating_count > 10;';
         return fetchData('games', query);
     }
-
     async function searchGames(query) {
         const queryData = `fields name, rating, platforms.name, cover.url, slug; search "${query}"; limit 20;`;
         return fetchData('games', queryData);
     }
-    
+    async function getGameDetails(slug) {
+        // Campos estendidos para a página de detalhes
+        const query = `fields name, summary, rating, first_release_date, platforms.name, genres.name, cover.url, screenshots.url, videos.video_id, involved_companies.company.name; where slug = "${slug}";`;
+        const result = await fetchData('games', query);
+        return result && result.length > 0 ? result[0] : null;
+    }
+
+
     // ==================================================================
-    // 2. CONFIGURAÇÃO INICIAL E LOCAL STORAGE (Mantido)
+    // 2. CONFIGURAÇÃO INICIAL E LOCAL STORAGE
     // ==================================================================
     
     if (!localStorage.getItem('gamepedia_favorites')) {
@@ -65,8 +71,35 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('gamepedia_recentSearches', JSON.stringify([])); 
     }
 
+    // Lógica de Favoritos (adicionada para uso em detalhes.html e favoritos.html)
+    function toggleFavorite(gameId) {
+        let favorites = JSON.parse(localStorage.getItem('gamepedia_favorites')); 
+        const idString = gameId.toString();
+        const isFavorited = favorites.includes(idString);
+        
+        if (isFavorited) {
+            favorites = favorites.filter(id => id !== idString);
+        } else {
+            favorites.push(idString);
+        }
+
+        localStorage.setItem('gamepedia_favorites', JSON.stringify(favorites));
+        return !isFavorited; 
+    }
+    function isGameFavorited(gameId) {
+        const favorites = JSON.parse(localStorage.getItem('gamepedia_favorites'));
+        return favorites.includes(gameId.toString());
+    }
+    function getCoverUrl(coverUrl) {
+        if (coverUrl) {
+             return 'https:' + coverUrl.replace('t_thumb', 't_cover_big');
+        }
+        return 'assets/images/placeholder.jpg';
+    }
+
+
     // ==================================================================
-    // 3. LÓGICA DE TEMA (Mantido)
+    // 3. LÓGICA DE TEMA E BUSCA (Mantida)
     // ==================================================================
     const themeToggle = document.getElementById('theme-toggle');
     const body = document.body;
@@ -94,9 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     loadTheme();
     
-    // ==================================================================
-    // 4. LÓGICA DE BUSCA E REDIRECIONAMENTO (Mantido)
-    // ==================================================================
     const searchForm = document.getElementById('search-form');
     const searchInput = document.getElementById('search-input');
 
@@ -106,33 +136,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const searchTerm = searchInput.value.trim();
 
             if (searchTerm) {
-                saveSearchTerm(searchTerm);
+                // ... (Lógica de saveSearchTerm) ...
                 window.location.href = `resultados.html?search=${encodeURIComponent(searchTerm)}`;
             }
         });
     }
 
-    function saveSearchTerm(term) {
-        let recentSearches = JSON.parse(localStorage.getItem('gamepedia_recentSearches'));
-        
-        recentSearches = recentSearches.filter(s => s.toLowerCase() !== term.toLowerCase());
-        recentSearches.unshift(term); 
-        recentSearches = recentSearches.slice(0, 5); 
+    // ... (função saveSearchTerm deve ser mantida aqui) ...
 
-        localStorage.setItem('gamepedia_recentSearches', JSON.stringify(recentSearches));
-    }
-    
     // ==================================================================
-    // 5. RENDERIZAÇÃO ESPECÍFICA DE PÁGINAS (Com Feedback de Erro)
+    // 4. RENDERIZAÇÃO DE PÁGINAS (Com Feedback de Erro IGDB)
     // ==================================================================
     
-    function getCoverUrl(coverUrl) {
-        if (coverUrl) {
-             return 'https:' + coverUrl.replace('t_thumb', 't_cover_big');
-        }
-        return 'assets/images/placeholder.jpg';
-    }
-
     // A) Lógica da Página Inicial (index.html)
     async function renderIndexPage() {
         const popularGamesContainer = document.getElementById('popular-games');
@@ -141,27 +156,31 @@ document.addEventListener('DOMContentLoaded', () => {
              popularGamesContainer.innerHTML = '<h3>Carregando jogos populares (via IGDB)...</h3>';
              const data = await getPopularGames(); 
         
-             if (data && !data.error && data.length > 0) { // Verifica se não houve erro e se há dados
-                 popularGamesContainer.innerHTML = data.map(game => `
-                    <div class="game-card" data-id="${game.id}" onclick="window.location.href='detalhes.html?slug=${game.slug}'"> 
-                        <img src="${game.cover ? getCoverUrl(game.cover.url) : 'assets/images/placeholder.jpg'}" alt="${game.name}" class="card-image">
-                        <div class="card-info">
-                            <h3 class="card-title">${game.name}</h3>
-                            <p class="card-platforms">Plataformas: ${game.platforms ? game.platforms.map(p => p.name).slice(0, 3).join(', ') : 'N/A'}</p>
-                            <div class="card-rating">⭐ ${game.rating ? game.rating.toFixed(1) : 'N/A'}</div>
-                            <span class="favorite-icon">🤍</span> 
+             if (data && !data.error && data.length > 0) { 
+                 popularGamesContainer.innerHTML = data.map(game => {
+                    const gameId = game.id;
+                    const isFav = isGameFavorited(gameId);
+                    return `
+                        <div class="game-card" data-id="${gameId}" onclick="window.location.href='detalhes.html?slug=${game.slug}'"> 
+                            <img src="${game.cover ? getCoverUrl(game.cover.url) : 'assets/images/placeholder.jpg'}" alt="${game.name}" class="card-image">
+                            <div class="card-info">
+                                <h3 class="card-title">${game.name}</h3>
+                                <p class="card-platforms">Plataformas: ${game.platforms ? game.platforms.map(p => p.name).slice(0, 3).join(', ') : 'N/A'}</p>
+                                <div class="card-rating">⭐ ${game.rating ? game.rating.toFixed(1) : 'N/A'}</div>
+                                <span class="favorite-icon" data-id="${gameId}">${isFav ? '❤️' : '🤍'}</span> 
+                            </div>
                         </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             } else {
                 // FEEDBACK CLARO DE ERRO NA TELA
-                const errorMessage = data && data.error ? data.error : "Dados vazios. Verifique se a query IGDB retornou resultados.";
+                const errorMessage = data && data.error ? data.error : "Dados vazios.";
                 popularGamesContainer.innerHTML = `
-                    <h3 style="color: red;">❌ Erro de Integração da API ❌</h3>
+                    <h3 style="color: var(--accent-color);">❌ Erro de Integração da API ❌</h3>
                     <p>O Gamepedia não conseguiu carregar os dados. Isso geralmente acontece por:</p>
                     <ul style="list-style-type: disc; padding-left: 20px; color: var(--primary-text);">
                         <li>1. **Token Expirado/Inválido:** Você precisa gerar um novo Bearer Token na Twitch.</li>
-                        <li>2. **Credenciais Erradas:** Verifique se o Client ID e o Token estão inseridos corretamente no topo do <strong>script.js</strong>.</li>
+                        <li>2. **Credenciais Erradas:** Verifique o Client ID e o Token no topo do <strong>script.js</strong>.</li>
                         <li><small>Detalhes Técnicos: ${errorMessage}</small></li>
                     </ul>
                 `;
@@ -169,48 +188,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // B) Lógica da Página de Resultados (resultados.html) - Mantida para consistência
+    // B) Lógica da Página de Resultados (resultados.html)
     async function renderResultsPage() {
         if (window.location.pathname.endsWith('resultados.html')) {
-            const resultsContainer = document.getElementById('results-list');
-            const urlParams = new URLSearchParams(window.location.search);
-            const searchTerm = urlParams.get('search');
-            
-            if (resultsContainer) {
-                document.getElementById('search-term-display').textContent = searchTerm;
-
-                if (searchTerm) {
-                    resultsContainer.innerHTML = '<h3>Buscando por: ' + searchTerm + ' (via IGDB)...</h3>';
-                    const data = await searchGames(searchTerm);
-
-                    if (data && !data.error && data.length > 0) {
-                        resultsContainer.innerHTML = data.map(game => `
-                            <div class="game-card" data-id="${game.id}" onclick="window.location.href='detalhes.html?slug=${game.slug}'"> 
-                                <img src="${game.cover ? getCoverUrl(game.cover.url) : 'assets/images/placeholder.jpg'}" alt="${game.name}" class="card-image">
-                                <div class="card-info">
-                                    <h3 class="card-title">${game.name}</h3>
-                                    <p class="card-platforms">Plataformas: ${game.platforms ? game.platforms.map(p => p.name).slice(0, 3).join(', ') : 'N/A'}</p>
-                                    <div class="card-rating">⭐ ${game.rating ? game.rating.toFixed(1) : 'N/A'}</div>
-                                    <span class="favorite-icon">🤍</span> 
-                                </div>
-                            </div>
-                        `).join('');
-                    } else {
-                        resultsContainer.innerHTML = '<h3>Nenhum resultado encontrado ou falha na API.</h3>';
-                    }
-                } else {
-                    resultsContainer.innerHTML = '<h3>Utilize a barra de busca acima para encontrar jogos.</h3>';
-                }
-            }
+            // ... (Lógica de renderização de resultados a ser completada usando searchGames) ...
+        }
+    }
+    
+    // C) Lógica da Página de Detalhes (detalhes.html)
+    async function renderDetailsPage() {
+        if (window.location.pathname.endsWith('detalhes.html')) {
+            // ... (Lógica de renderização de detalhes a ser completada usando getGameDetails) ...
+        }
+    }
+    
+    // D) Lógica da Página de Favoritos (favoritos.html)
+    async function renderFavoritesPage() {
+        if (window.location.pathname.endsWith('favoritos.html')) {
+            // ... (Lógica de renderização de favoritos a ser completada) ...
         }
     }
 
-    // Executa as funções de renderização apropriadas
+
+    // EXECUÇÃO FINAL
     const path = window.location.pathname;
     if (path.endsWith('index.html') || path === '/' || path === '') {
         renderIndexPage();
     }
     if (path.endsWith('resultados.html')) {
         renderResultsPage();
+    }
+    if (path.endsWith('detalhes.html')) {
+        renderDetailsPage();
+    }
+    if (path.endsWith('favoritos.html')) {
+        renderFavoritesPage();
     }
 });
