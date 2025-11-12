@@ -158,7 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (authMenu) {
                 authMenu.innerHTML = `
                     <a href="perfil.html" class="auth-link">Ver Perfil</a>
-                    <a href="favoritos.html" class="auth-link">Meus Favoritos</a>
                     <button id="logout-btn" class="auth-logout">Sair</button>
                 `;
             }
@@ -174,33 +173,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    authButton.addEventListener('click', (e) => {
-        e.stopPropagation();
+    // abrir/fechar menu ao clicar
+    authButton && authButton.addEventListener('click', (e) => {
         const user = getUser();
-        // se não existir menu (ex.: páginas de login simples), redireciona
         if (!authMenu) {
             if (!user) window.location.href = 'login.html';
-            else window.location.href = 'perfil.html';
             return;
         }
-        const isOpen = authMenu.style.display === 'block';
-        authMenu.style.display = isOpen ? 'none' : 'block';
-        authMenu.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
+        authMenu.style.display = authMenu.style.display === 'block' ? 'none' : 'block';
     });
 
+    // fechar menu ao clicar fora
     document.addEventListener('click', (e) => {
-        if (!authMenu) return;
+        if (!authMenu || !authButton) return;
         if (!authButton.contains(e.target) && !authMenu.contains(e.target)) {
             authMenu.style.display = 'none';
-            authMenu.setAttribute('aria-hidden', 'true');
         }
     });
 
+    // logout
     document.addEventListener('click', (e) => {
         if (e.target && e.target.id === 'logout-btn') {
             localStorage.removeItem('gamepedia_user');
             renderAuth();
-            if (authMenu) { authMenu.style.display = 'none'; authMenu.setAttribute('aria-hidden','true'); }
+            authMenu.style.display = 'none';
         }
     });
 
@@ -208,85 +204,3 @@ document.addEventListener('DOMContentLoaded', () => {
     Search.init();
     renderAuth();
 });
-
-/* ---------- Auth UI: botão Entrar / Perfil (usa Local Storage: gamepedia_user) ---------- */
-function initAuthUI() {
-    const authButton = document.getElementById('auth-button');
-    const authMenu = document.getElementById('auth-menu');
-
-    if (!authButton) return;
-
-    function getUser() {
-        try { return JSON.parse(localStorage.getItem('gamepedia_user')); } catch { return null; }
-    }
-
-    function renderAuth() {
-        const user = getUser();
-        if (user && user.username) {
-            authButton.textContent = user.username;
-            authButton.classList.add('logged-in');
-            if (authMenu) {
-                authMenu.innerHTML = `
-                    <a href="perfil.html" class="auth-link">Ver Perfil</a>
-                    <a href="favoritos.html" class="auth-link">Meus Favoritos</a>
-                    <button id="logout-btn" class="auth-logout">Sair</button>
-                `;
-            }
-        } else {
-            authButton.textContent = 'Entrar';
-            authButton.classList.remove('logged-in');
-            if (authMenu) {
-                authMenu.innerHTML = `
-                    <a href="login.html" class="auth-link">Entrar</a>
-                    <a href="cadastro.html" class="auth-link">Criar Conta</a>
-                `;
-            }
-        }
-    }
-
-    // <-- changed: se não logado, redireciona para login; se logado, abre/fecha menu -->
-    authButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const user = getUser();
-        if (!user || !user.username) {
-            // redireciona diretamente à tela de login quando não autenticado
-            window.location.href = 'login.html';
-            return;
-        }
-        // usuário logado: alterna o menu de perfil
-        if (!authMenu) {
-            window.location.href = 'perfil.html';
-            return;
-        }
-        const isOpen = authMenu.style.display === 'block';
-        authMenu.style.display = isOpen ? 'none' : 'block';
-        authMenu.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!authMenu) return;
-        if (!authButton.contains(e.target) && !authMenu.contains(e.target)) {
-            authMenu.style.display = 'none';
-            authMenu.setAttribute('aria-hidden', 'true');
-        }
-    });
-
-    document.addEventListener('click', (e) => {
-        if (e.target && e.target.id === 'logout-btn') {
-            localStorage.removeItem('gamepedia_user');
-            renderAuth();
-            if (authMenu) { authMenu.style.display = 'none'; authMenu.setAttribute('aria-hidden','true'); }
-        }
-    });
-
-    renderAuth();
-}
-
-/* inicializar auth junto com outras inicilaizações de DOM */
-// Se já existir um DOMContentLoaded no arquivo, apenas garanta que initAuthUI seja chamado lá.
-// Aqui adicionamos uma chamada segura:
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAuthUI);
-} else {
-    initAuthUI();
-}
