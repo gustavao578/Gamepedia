@@ -1,13 +1,18 @@
 /**
  * API Service - Gamepedia
- * Gerencia todas as chamadas à IGDB API e ao banco de dados local
+ * Gerencia todas as chamadas à API RAWG.io
+ *
+ * NOTA: Migrado da IGDB para a RAWG para ser mais amigável
+ * ao frontend (sem CORS, chave de API simples).
  */
 
 const API_CONFIG = {
-    IGDB_BASE_URL: 'https://api.igdb.com/v4',
-    IGDB_CLIENT_ID: 'botc0vhk45urrf6f0m4tpzrwj5hfho', // Substitua pela sua chave
-    IGDB_ACCESS_TOKEN: 'YOUR_IGDB_ACCESS_TOKEN', // Substitua pelo seu token
-    USE_LOCAL_DATA: true // Mude para false quando configurar IGDB
+    RAWG_BASE_URL: 'https://api.rawg.io/api',
+    // ! COLE SUA CHAVE DE API DA RAWG.IO AQUI
+    RAWG_API_KEY: 'aa342ec7cbfd4929acc7ccfc090d5db5',
+    // IDs das tags para excluir (71 = Sexual Content, 237 = Erotic, 472 = NSFW)
+    EXCLUDE_TAGS: '71,237,472', 
+    LANGUAGE: 'pt'
 };
 
 class GamepadiaAPI {
@@ -17,34 +22,54 @@ class GamepadiaAPI {
     }
 
     /**
-     * Faz requisição à IGDB API
+     * Faz requisição à API RAWG
      */
-    async fetchFromIGDB(endpoint, body) {
-        if (!API_CONFIG.IGDB_CLIENT_ID || !API_CONFIG.IGDB_ACCESS_TOKEN) {
-            console.warn('⚠️ IGDB não configurado. Usando dados locais.');
+    async fetchFromRAWG(endpoint) {
+        if (!API_CONFIG.RAWG_API_KEY || API_CONFIG.RAWG_API_KEY === 'COLE_SUA_CHAVE_API_DA_RAWG_AQUI') {
+            console.warn('⚠️ RAWG API Key não configurada. Verifique api.js.');
             return null;
+        }
+
+        // Adiciona a chave de API à URL
+        let url = `${API_CONFIG.RAWG_BASE_URL}/${endpoint}${endpoint.includes('?') ? '&' : '?'}key=${API_CONFIG.RAWG_API_KEY}`;
+
+         url += `&lang=${API_CONFIG.LANGUAGE}`;
+
+        
+        // Adiciona a exclusão de tags em todas as chamadas para 'games'
+        if (endpoint.startsWith('games')) {
+            url += `&exclude_tags=${API_CONFIG.EXCLUDE_TAGS}`;
         }
 
         try {
-            const response = await fetch(`${API_CONFIG.IGDB_BASE_URL}/${endpoint}`, {
-                method: 'POST',
-                headers: {
-                    'Client-ID': API_CONFIG.IGDB_CLIENT_ID,
-                    'Authorization': `Bearer ${API_CONFIG.IGDB_ACCESS_TOKEN}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(body)
-            });
-
+            const response = await fetch(url);
             if (!response.ok) {
-                throw new Error(`IGDB Error: ${response.statusText}`);
+                console.error(`RAWG Error: ${response.status} ${response.statusText}`);
+                throw new Error(`RAWG Error: ${response.statusText}`);
             }
-
             return await response.json();
         } catch (error) {
-            console.error('Erro na requisição IGDB:', error);
+            console.error('Erro na requisição RAWG:', error);
             return null;
         }
+    }
+
+    /**
+     * Processa os dados brutos do jogo da RAWG para o formato do nosso App
+     */
+    processGameData(game) {
+        return {
+            id: game.id,
+            name: game.name,
+            summary: game.description_raw || game.description, // description_raw é melhor (sem HTML)
+            cover_url: game.background_image,
+            rating: game.rating, // Nota é de 0 a 5
+            release_date: game.released, // Formato YYYY-MM-DD
+            genres: game.genres ? game.genres.map(g => g.name) : ['N/A'],
+            platforms: game.platforms ? game.platforms.map(p => p.platform.name) : ['N/A'],
+            developer: game.developers ? game.developers.map(d => d.name).join(', ') : 'N/A',
+            // Screenshots e vídeos são tratados em chamadas separadas
+        };
     }
 
     /**
@@ -56,22 +81,14 @@ class GamepadiaAPI {
             return this.cache.get(cacheKey);
         }
 
-        if (API_CONFIG.USE_LOCAL_DATA) {
-            return await this.loadLocalGames();
+        // O filtro de exclusão de tags será adicionado automaticamente pelo fetchFromRAWG
+        const data = await this.fetchFromRAWG(`games?ordering=-rating&page_size=${limit}`);
+        if (data && data.results) {
+            const processedResult = data.results.map(this.processGameData);
+            this.cache.set(cacheKey, processedResult);
+            return processedResult;
         }
-
-        const query = `
-            fields id, name, cover.url, rating, release_dates.y, genres.name, platforms.name;
-            where rating > 70;
-            sort rating desc;
-            limit ${limit};
-        `;
-
-        const result = await this.fetchFromIGDB('games', { query });
-        if (result) {
-            this.cache.set(cacheKey, result);
-        }
-        return result;
+        return [];
     }
 
     /**
@@ -83,21 +100,18 @@ class GamepadiaAPI {
             return this.cache.get(cacheKey);
         }
 
-        if (API_CONFIG.USE_LOCAL_DATA) {
-            return await this.loadLocalGames();
-        }
+        // Pega data de hoje e 3 meses atrás para "recentes"
+        const today = new Date().toISOString().split('T')[0];
+        const threeMonthsAgo = new Date(new Date().setMonth(new Date().getMonth() - 3)).toISOString().split('T')[0];
 
-        const query = `
-            fields id, name, cover.url, rating, release_dates.y, genres.name, platforms.name;
-            sort release_dates.y desc;
-            limit ${limit};
-        `;
-
-        const result = await this.fetchFromIGDB('games', { query });
-        if (result) {
-            this.cache.set(cacheKey, result);
+        // O filtro de exclusão de tags será adicionado automaticamente pelo fetchFromRAWG
+        const data = await this.fetchFromRAWG(`games?dates=${threeMonthsAgo},${today}&ordering=-released&page_size=${limit}`);
+        if (data && data.results) {
+            const processedResult = data.results.map(this.processGameData);
+            this.cache.set(cacheKey, processedResult);
+            return processedResult;
         }
-        return result;
+        return [];
     }
 
     /**
@@ -109,71 +123,66 @@ class GamepadiaAPI {
             return this.cache.get(cacheKey);
         }
 
-        if (API_CONFIG.USE_LOCAL_DATA) {
-            return await this.getLocalGameById(id);
-        }
+        const gameData = await this.fetchFromRAWG(`games/${id}`);
+        if (!gameData) return null;
 
-        const query = `
-            fields id, name, summary, cover.url, rating, release_dates.y, genres.name, platforms.name, companies.name, screenshots.url, videos.video_id;
-            where id = ${id};
-        `;
+        // NOTA: Screenshots e trailers são buscados separadamente pela página
+        // para melhor controle de carregamento.
 
-        const result = await this.fetchFromIGDB('games', { query });
-        if (result && result.length > 0) {
-            this.cache.set(cacheKey, result[0]);
-            return result[0];
-        }
-        return null;
+        // ! CORREÇÃO: Não processar o gameData aqui.
+        // A página de detalhes precisa do objeto "cru" (raw) da API
+        // para ter acesso a todos os campos (metacritic, description, ratings_count, etc.)
+        // A função processGameData() é só para os cards das listas.
+        // const processedGame = this.processGameData(gameData);
+        
+        // Retorna o dado bruto e salva em cache
+        this.cache.set(cacheKey, gameData);
+        return gameData;
     }
+
+    /**
+     * Busca screenshots de um jogo
+     */
+    async getGameScreenshots(id) {
+        const data = await this.fetchFromRAWG(`games/${id}/screenshots`);
+        return data ? data.results : [];
+    }
+
+    /**
+     * Busca trailers de um jogo
+     */
+    async getGameTrailers(id) {
+        const data = await this.fetchFromRAWG(`games/${id}/movies`);
+        return data ? data.results : [];
+    }
+
+    /**
+     * Busca reviews de usuários de um jogo
+     */
+    async getGameReviews(id) {
+        const data = await this.fetchFromRAWG(`games/${id}/reviews`);
+        return data ? data.results : [];
+    }
+
+    /**
+     * Busca jogos similares
+     */
+    async getSimilarGames(id) {
+        const data = await this.fetchFromRAWG(`games/${id}/suggested`);
+        return data ? data.results : [];
+    }
+
 
     /**
      * Busca jogos por termo de busca
      */
     async searchGames(searchTerm, limit = 50) {
-        if (API_CONFIG.USE_LOCAL_DATA) {
-            return await this.searchLocalGames(searchTerm);
+        // O filtro de exclusão de tags será adicionado automaticamente pelo fetchFromRAWG
+        const data = await this.fetchFromRAWG(`games?search=${encodeURIComponent(searchTerm)}&page_size=${limit}`);
+        if (data && data.results) {
+            return data.results.map(this.processGameData);
         }
-
-        const query = `
-            fields id, name, cover.url, rating, release_dates.y, genres.name, platforms.name;
-            search "${searchTerm}";
-            limit ${limit};
-        `;
-
-        return await this.fetchFromIGDB('games', { query });
-    }
-
-    /**
-     * Carrega dados locais (fallback)
-     */
-    async loadLocalGames() {
-        try {
-            const response = await fetch('assets/js/data/games.json');
-            return await response.json();
-        } catch (error) {
-            console.error('Erro ao carregar games.json:', error);
-            return [];
-        }
-    }
-
-    /**
-     * Busca jogo local por ID
-     */
-    async getLocalGameById(id) {
-        const games = await this.loadLocalGames();
-        return games.find(g => g.id === parseInt(id));
-    }
-
-    /**
-     * Busca jogos locais por termo
-     */
-    async searchLocalGames(searchTerm) {
-        const games = await this.loadLocalGames();
-        const term = searchTerm.toLowerCase();
-        return games.filter(game =>
-            game.name.toLowerCase().includes(term) ||
-            game.genres?.some(g => g.toLowerCase().includes(term))
-        );
+        return [];
     }
 
     /**

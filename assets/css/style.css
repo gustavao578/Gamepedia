@@ -41,8 +41,9 @@ a {
     --secondary-bg: #FFFFFF;
     --accent-color: #9146FF; 
     --color-text-secondary: #666666;
-    --header-bg: #222222;
-    --header-text: #FFFFFF;
+    --header-bg: #FFFFFF; /* Header claro no light mode */
+    --header-text: #151515;
+    --card-border: rgba(0, 0, 0, 0.1);
 }
 
 body.dark-mode {
@@ -54,6 +55,7 @@ body.dark-mode {
     --color-text-secondary: #AAAAAA;
     --header-bg: #0A0A0A;
     --header-text: #EAEAEA;
+    --card-border: rgba(145, 70, 255, 0.1);
 }
 
 /* Aplicação das cores do tema no body */
@@ -74,6 +76,7 @@ header {
     width: 100%;
     z-index: 1000;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    color: var(--header-text); /* Garante que texto no header siga o tema */
 }
 
 header .header-content {
@@ -89,7 +92,39 @@ header .marca {
     color: var(--accent-color); /* Usa a variável para garantir a visibilidade */
     margin-bottom: 0;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
+
+/* TAREFA 4: Estilo do Logo */
+.logo {
+    height: 30px; /* Ajusta altura do logo */
+    width: 30px;
+}
+/* TAREFA 4: Estilo do Ícone de Tema */
+.theme-icon {
+    height: 20px;
+    width: 20px;
+    stroke: var(--header-text); /* Cor do ícone */
+}
+/* Ajusta botões de tema */
+#theme-toggle, #theme-toggle-footer {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--header-text);
+    padding: 5px;
+}
+#theme-toggle-footer {
+    color: var(--color-text-secondary);
+}
+#theme-toggle .theme-icon, 
+#theme-toggle-footer .theme-icon {
+     stroke: currentColor; /* Ícone herda a cor do botão */
+     display: block; /* Remove espaço extra */
+}
+
 
 header nav {
     display: flex;
@@ -118,9 +153,10 @@ header nav a:hover {
     padding: 10px 15px;
     border: none;
     border-radius: 20px 0 0 20px;
-    background: var(--primary-bg);
-    color: var(--primary-text);
+    background: var(--primary-bg); /* Fundo do body */
+    color: var(--primary-text); /* Texto do body */
     font-family: 'Poppins', sans-serif;
+    border: 1px solid var(--card-border); /* Borda sutil */
 }
 
 .search-bar input::placeholder {
@@ -142,6 +178,7 @@ header nav a:hover {
     background: #7c2be8;
 }
 
+
 /* Botão Entrar/Login */
 header .btn-login {
     border: 2px solid var(--header-text);
@@ -159,41 +196,20 @@ header .btn-login:hover {
     border-color: var(--accent-color);
 }
 
-/* Barra de Busca */
-.search-bar {
-    display: flex;
-    flex-grow: 1;
-    max-width: 400px;
-    margin: 0 40px;
-}
-
-.search-bar input {
-    flex-grow: 1;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 20px 0 0 20px;
-    background-color: #333; /* Fundo escuro para input */
-    color: #fff;
-}
-
-.search-bar button {
-    background: #444;
-    color: #fff;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 0 20px 20px 0;
-    cursor: pointer;
-    font-size: 1em;
-}
-
+/* Ajuste do Main para header fixo */
 main {
-    background: var(--secondary-bg); 
-    border: 1px solid var(--primary-bg); 
-    border-radius: 15px;
-    padding: 20px;
-    min-height: 70vh;
-    margin-top: 80px;
+    padding-top: 100px; /* Espaço para o header fixo */
 }
+
+/* Seção principal (index) */
+main.container > h2 {
+    font-size: 2em;
+    margin-bottom: 25px;
+    color: var(--accent-color);
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--accent-color);
+}
+
 
 h1 {
     font-size: 2.5em;
@@ -201,11 +217,6 @@ h1 {
     color: var(--accent-color);
 }
 
-h2 {
-    font-size: 2em;
-    margin-bottom: 25px;
-    color: var(--accent-color);
-}
 
 h3 {
     font-size: 1.5em;
@@ -214,8 +225,8 @@ h3 {
 
 /* FOOTER */
 footer {
-    background: var(--secondary-bg);
-    border-top: 1px solid rgba(145, 70, 255, 0.2);
+    background: var(--header-bg); /* Footer igual ao header */
+    border-top: 1px solid var(--card-border);
     padding: 25px 0;
     margin-top: 60px;
 }
@@ -243,7 +254,7 @@ footer a:hover {
 }
 
 /* ==================================================================
-   ESTILOS DE CATALOGO: GAME CARD E LISTAS (Mantidos)
+   ESTILOS DE CATALOGO: GAME CARD E LISTAS
    ================================================================== */
 .game-list {
     display: grid;
@@ -259,7 +270,7 @@ footer a:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
-    border: 1px solid rgba(145, 70, 255, 0.1);
+    border: 1px solid var(--card-border);
     position: relative;
 }
 
@@ -270,9 +281,10 @@ footer a:hover {
 
 .card-image {
     width: 100%;
-    height: 200px;
+    height: 300px; /* Aumentado para capas */
     object-fit: cover;
     display: block;
+    background-color: var(--primary-bg); /* Cor de fundo enquanto carrega */
 }
 
 .card-info {
@@ -283,19 +295,31 @@ footer a:hover {
     font-size: 1.1em;
     font-weight: 600;
     margin-bottom: 8px;
+    color: var(--primary-text);
+    /* Trunca texto longo */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.game-card:hover .card-title {
     color: var(--accent-color);
 }
+
 
 .card-platforms {
     font-size: 0.85em;
     color: var(--color-text-secondary);
     margin-bottom: 10px;
+    /* Trunca texto longo */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .card-rating {
     display: inline-block;
-    background: #ffc107;
-    color: #000;
+    background: var(--accent-color);
+    color: #fff;
     padding: 4px 10px;
     border-radius: 6px;
     font-weight: 700;
@@ -306,14 +330,15 @@ footer a:hover {
     position: absolute;
     top: 10px;
     right: 10px;
-    font-size: 1.8em;
+    font-size: 1.5em; /* Reduzido */
     cursor: pointer;
     background: rgba(0, 0, 0, 0.5);
     padding: 8px;
     border-radius: 50%;
+    line-height: 1;
     transition: transform 0.2s;
+    color: white; /* Garante que o emoji seja visível */
 }
-
 .favorite-icon:hover {
     transform: scale(1.2);
 }
@@ -322,7 +347,9 @@ footer a:hover {
    ESTILOS DE AUTENTICAÇÃO: LOGIN E CADASTRO (Mantidos)
    ================================================================== */
 
-header.global-header, footer {
+/* Oculta header/footer padrão em páginas de auth */
+body.auth-page #global-header, 
+body.auth-page footer {
     display: none; 
 }
 
@@ -331,6 +358,7 @@ body.auth-page {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    padding-top: 0; /* Remove padding do main */
 }
 
 .auth-container {
@@ -399,10 +427,12 @@ body.auth-page {
 }
 
 /* ==================================================================
-   ESTILOS DE DETALHES (detalhes.html) - Mantidos
+   ESTILOS DE DETALHES (detalhes.html)
    ================================================================== */
 .detalhes-main {
-    padding-top: 40px;
+    /* CORREÇÃO: Aplicando o padding-top diretamente aqui para
+       resolver o conflito de especificidade com a regra global 'main' */
+    padding-top: 100px; 
 }
 
 .detail-header {
@@ -411,6 +441,7 @@ body.auth-page {
     align-items: center;
     margin-bottom: 20px;
     gap: 20px;
+    flex-wrap: wrap; /* Quebra em telas menores */
 }
 
 .favorite-btn {
@@ -452,7 +483,7 @@ body.auth-page {
 
 .detail-body {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 300px 1fr; /* Coluna da capa fixa */
     gap: 30px;
     margin-bottom: 40px;
 }
@@ -460,9 +491,11 @@ body.auth-page {
 .detail-cover {
     width: 100%;
     max-width: 300px;
+    height: 400px;
+    object-fit: cover;
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    object-fit: cover;
+    background-color: var(--secondary-bg);
 }
 
 .detail-description {
@@ -471,31 +504,52 @@ body.auth-page {
     gap: 20px;
 }
 
-.section-title {
+.section-title { /* Re-estilizado */
     color: var(--accent-color);
-    margin-bottom: 10px;
-    font-size: 1.2em;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    font-family: 'Orbitron', sans-serif;
 }
 
-.gallery-grid {
+/* TAREFA 2: Estilos para Mídias */
+.media-section {
+    margin-top: 40px;
+}
+
+.screenshots-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 15px;
-    margin-bottom: 40px;
 }
 
-.gallery-grid img {
+.screenshots-container img {
     width: 100%;
+    height: 120px;
+    object-fit: cover;
     border-radius: 8px;
     cursor: pointer;
-    transition: transform 0.3s;
-    object-fit: cover;
-    height: 150px;
+    transition: transform 0.3s, opacity 0.3s;
+    border: 1px solid var(--card-border);
 }
 
-.gallery-grid img:hover {
+.screenshots-container img:hover {
     transform: scale(1.05);
+    opacity: 0.8;
 }
+
+.trailers-container {
+    display: grid;
+    grid-template-columns: 1fr; /* Um trailer por linha */
+    gap: 20px;
+}
+
+.trailer-video {
+    width: 100%;
+    aspect-ratio: 16 / 9; /* Garante proporção correta */
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+}
+
 
 /* ==================================================================
    FILTROS (Resultados)
@@ -506,11 +560,15 @@ body.auth-page {
     padding: 20px;
     border-radius: 12px;
     margin-bottom: 30px;
-    border: 1px solid rgba(145, 70, 255, 0.1);
+    border: 1px solid var(--card-border);
+    display: grid;
+    /* TAREFA 3: Grid para filtros */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
 }
 
 .filter-group {
-    margin-bottom: 20px;
+    margin-bottom: 0; /* Removido, gap cuida disso */
 }
 
 .filter-group:last-child {
@@ -533,7 +591,13 @@ body.auth-page {
     background: var(--primary-bg);
     color: var(--primary-text);
     font-family: 'Poppins', sans-serif;
+    font-size: 1em;
 }
+/* TAREFA 3: Estilo para input date */
+.date-input {
+    color-scheme: var(--primary-bg); /* Adapta o picker ao tema */
+}
+
 
 .filter-group select:focus,
 .filter-group input:focus {
@@ -542,69 +606,44 @@ body.auth-page {
     box-shadow: 0 0 0 2px rgba(145, 70, 255, 0.2);
 }
 
-/* ==================================================================
-   TEMA TOGGLE BUTTON NO FOOTER
-   ================================================================== */
-
-#theme-toggle-footer {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 1.5em;
-    color: var(--color-text-secondary);
-    transition: color 0.3s;
-}
-
-#theme-toggle-footer:hover {
-    color: var(--accent-color);
-}
 
 /* ==================================================================
-   BOTÃO ENTRAR MELHORADO
+   AUTENTICAÇÃO (MENU DROPDOWN)
    ================================================================== */
 
-.btn-login {
-    border: 2px solid var(--header-text);
-    color: var(--header-text);
-    background: transparent;
-    padding: 8px 20px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s;
-    font-family: 'Poppins', sans-serif;
-}
-
-.btn-login:hover {
-    background: var(--accent-color);
-    border-color: var(--accent-color);
-    color: white;
-}
-
-/* Autenticação: botão e menu */
 .auth-wrapper { position: relative; display: flex; align-items: center; gap: 8px; }
 .auth-btn {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.06);
-  color: var(--color-text);
-  padding: 6px 10px;
-  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  color: var(--header-text);
+  padding: 8px 15px;
+  border-radius: 20px;
   cursor: pointer;
   font-size: 0.95rem;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s;
 }
-.auth-btn.logged-in { font-weight: 600; }
+.auth-btn.logged-in { 
+    font-weight: 600; 
+    border-color: var(--accent-color);
+}
+.auth-btn:hover {
+    border-color: var(--accent-color);
+}
+
 .auth-menu {
   position: absolute;
   right: 0;
   top: calc(100% + 8px);
-  background: var(--card-bg);
-  color: var(--color-text);
+  background: var(--secondary-bg);
+  color: var(--primary-text);
   box-shadow: 0 6px 18px rgba(0,0,0,0.45);
   padding: 8px;
   border-radius: 8px;
   min-width: 180px;
   display: none;
   z-index: 1200;
+  border: 1px solid var(--card-border);
 }
 .auth-menu a, .auth-menu button {
   display: block;
@@ -617,38 +656,84 @@ body.auth-page {
   width: 100%;
   cursor: pointer;
   font-size: 0.95rem;
+  font-family: 'Poppins', sans-serif;
 }
-.auth-menu a:hover, .auth-menu button:hover { background: rgba(255,255,255,0.03); border-radius: 6px; }
+.auth-menu a:hover, .auth-menu button:hover { 
+    background: var(--primary-bg); 
+    color: var(--accent-color);
+    border-radius: 6px; 
+}
 /* ==================================================================
-   RESPONSIVE MELHORADO
+   RESPONSIVO
    ================================================================== */
 
 @media (max-width: 1024px) {
     .detail-body {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr; /* Capa e descrição em coluna */
     }
 
     .detail-cover {
-        max-width: 100%;
+        max-width: 300px; /* Limita largura da capa no centro */
+        margin: 0 auto; /* Centraliza */
     }
 }
 
 @media (max-width: 768px) {
     main {
-        margin-top: 120px;
+        padding-top: 140px; /* Mais espaço para header que quebra linha */
     }
+
+    header .header-content {
+        flex-wrap: wrap; /* Permite quebra de linha */
+        justify-content: space-between;
+        row-gap: 15px;
+    }
+    
+    /* CORREÇÃO: Ajustando o padding da página de detalhes para mobile */
+    .detalhes-main {
+        padding-top: 140px;
+    }
+
+    header .header-content {
+    header .marca {
+        flex-basis: 50%; /* Marca e Botão de Tema na primeira linha */
+    }
+    
+    #theme-toggle {
+        flex-basis: auto;
+    }
+    
+    header nav {
+        flex-basis: 100%; /* Nav e Auth na segunda linha (opcional) */
+        order: 3;
+        display: none; /* Simplificado: Oculta nav em telas menores */
+    }
+    
+    .auth-wrapper {
+        display: none; /* Simplificado: Oculta auth em telas menores */
+    }
+
+    .search-bar {
+        flex-basis: 100%; /* Barra de busca ocupa linha inteira */
+        max-width: none;
+        order: 2; /* Fica no meio */
+    }
+
 
     h1 {
         font-size: 1.8em;
     }
 
-    h2 {
+    h2, main.container > h2, .section-title {
         font-size: 1.5em;
     }
 
     .game-list {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 15px;
+    }
+    .card-image {
+        height: 220px;
     }
 
     .detail-header {
@@ -662,42 +747,184 @@ body.auth-page {
 }
 
 @media (max-width: 480px) {
-    header .header-content {
-        flex-wrap: wrap;
+    main {
+        padding-top: 130px; 
     }
-
+    
     header .marca {
-        font-size: 1.4em;
-        flex-basis: 100%;
+        font-size: 1.5em;
     }
 
-    header nav {
-        display: none;
+    /* CORREÇÃO: Ajustando o padding da página de detalhes para mobile pequeno */
+    .detalhes-main {
+        padding-top: 130px;
     }
-
-    .search-bar {
-        flex-basis: 100%;
-        max-width: none;
-        order: 2;
-    }
-
-    #theme-toggle {
-        order: 3;
-    }
-
+    
+    header .marca {
     .game-list {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr; /* Duas colunas no celular */
     }
 
     .detail-metadata {
         flex-direction: column;
+        gap: 10px;
     }
 
-    .gallery-grid {
-        grid-template-columns: 1fr;
+    .screenshots-container {
+        grid-template-columns: 1fr 1fr;
     }
+    .screenshots-container img {
+        height: 100px;
+    }
+}
 
-    .gallery-grid img {
-        height: 200px;
+/* ==================================================================
+   NOVOS ESTILOS - ESTRUTURA RAWG (ADICIONADOS)
+   ================================================================== */
+
+/* Bloco 1: Grid Principal de Infos */
+.main-info-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr; /* Coluna da capa fixa */
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.main-image-container .detail-cover {
+    width: 300px;
+    height: 400px;
+    object-fit: cover;
+}
+
+.info-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+.info-list li {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--card-border);
+    gap: 10px;
+}
+.info-list li strong {
+    color: var(--color-text-secondary);
+    flex-basis: 150px; /* Alinha as colunas */
+}
+.info-list li span {
+    flex: 1;
+    text-align: right;
+    color: var(--primary-text);
+}
+
+.metacritic {
+    display: inline-block;
+    padding: 5px 8px;
+    border: 1px solid #66CC33;
+    color: #66CC33;
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+/* Bloco 2: Descrição */
+#description p {
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    white-space: pre-wrap; /* Preserva quebras de linha da API */
+}
+
+/* Bloco 3: Tags */
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.tag {
+    background-color: var(--secondary-bg);
+    border: 1px solid var(--card-border);
+    color: var(--color-text-secondary);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+}
+
+/* Bloco 6: Avaliações */
+.rating-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.rating-bar {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+}
+.rating-title {
+    color: var(--color-text-secondary);
+}
+.bar-bg {
+    width: 100%;
+    height: 10px;
+    background-color: var(--secondary-bg);
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+}
+.bar-fill {
+    height: 100%;
+    background-color: var(--accent-color);
+}
+.user-review {
+    background-color: var(--secondary-bg);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--accent-color);
+}
+.user-review p {
+    color: var(--color-text-secondary);
+    margin-top: 10px;
+}
+
+/* Bloco 7: Jogos Similares (Reutiliza .game-list) */
+#similar-games-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+#similar-games-grid .card-image {
+    height: 120px; /* Mais baixo para cards similares */
+}
+
+/* Ajustes responsivos para os novos blocos */
+@media (max-width: 1024px) {
+    .main-info-grid {
+        grid-template-columns: 1fr; /* Capa e descrição em coluna */
     }
+    .main-image-container .detail-cover {
+        max-width: 300px;
+        margin: 0 auto; /* Centraliza */
+    }
+    .info-list li {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .info-list li span {
+        text-align: left;
+        margin-top: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .rating-bar {
+        grid-template-columns: 100px 1fr;
+    }
+    .rating-title {
+        font-size: 0.8em;
+    }
+}
+}
 }

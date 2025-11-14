@@ -54,15 +54,16 @@ const Storage = {
 const UI = {
     createGameCard(game) {
         const isFav = Storage.isFavorited(game.id);
-        const coverUrl = game.cover_url || 'https://via.placeholder.com/220x300?text=No+Image';
+        const placeholder = 'https://placehold.co/220x300/1F1F1F/EAEAEA?text=No+Image';
+        const coverUrl = game.cover_url || placeholder;
 
         return `
             <div class="game-card" onclick="window.location.href='detalhes.html?id=${game.id}'">
-                <img src="${coverUrl}" alt="${game.name}" class="card-image" onerror="this.src='https://via.placeholder.com/220x300?text=No+Image'">
+                <img src="${coverUrl}" alt="${game.name}" class="card-image" onerror="this.src='${placeholder}'">
                 <div class="card-info">
                     <h3 class="card-title">${game.name}</h3>
                     <p class="card-platforms">${(game.platforms && game.platforms.join(', ')) || 'Multiplataforma'}</p>
-                    <span class="card-rating">⭐ ${(game.rating || 0).toFixed(1)}</span>
+                    <span class="card-rating">⭐ ${(game.rating || 0).toFixed(0)}</span>
                 </div>
                 <span class="favorite-icon" data-id="${game.id}" onclick="event.stopPropagation(); UI.toggleFav(this)">${isFav ? '❤️' : '🤍'}</span>
             </div>
@@ -73,6 +74,17 @@ const UI = {
         const gameId = parseInt(element.dataset.id);
         const isNowFav = Storage.toggleFavorite(gameId);
         element.textContent = isNowFav ? '❤️' : '🤍';
+
+        // Atualiza a lista de favoritos se estivermos na página de favoritos
+        if (document.body.id === 'page-favoritos' && !isNowFav) {
+             // Remove o card da DOM
+            element.closest('.game-card').remove();
+            // Verifica se a lista ficou vazia
+            const list = document.getElementById('favorites-list');
+            if (list && list.children.length === 0) {
+                document.getElementById('empty-message').style.display = 'block';
+            }
+        }
     }
 };
 
@@ -100,11 +112,17 @@ const Theme = {
         this.apply(newTheme);
     },
 
+    // ** TAREFA 4: Atualizado para usar SVGs **
     updateIcons() {
         const isDark = Storage.getTheme() === 'dark';
-        const icon = isDark ? '☀️' : '🌙';
+        // Mostra o ícone do *oposto* para indicar a ação de clique
+        const sunIcon = '<img src="assets/images/sun-icon.svg" alt="Mudar para Modo Claro" class="theme-icon">';
+        const moonIcon = '<img src="assets/images/moon-icon.svg" alt="Mudar para Modo Escuro" class="theme-icon">';
+        
+        const icon = isDark ? sunIcon : moonIcon;
+        
         document.querySelectorAll('[id*="theme-toggle"]').forEach(btn => {
-            btn.textContent = icon;
+            btn.innerHTML = icon;
         });
     },
 

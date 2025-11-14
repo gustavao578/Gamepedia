@@ -10,7 +10,11 @@
 
     <header id="global-header">
         <div class="container header-content">
-            <div class="marca">🎮 Gamepedia</div>
+            <!-- TAREFA 4: Logo SVG adicionada -->
+            <a href="index.html" class="marca">
+                <img src="assets/images/logo.svg" alt="Gamepedia Logo" class="logo">
+                Gamepedia
+            </a>
             <nav>
                 <a href="index.html">Início</a>
                 <a href="favoritos.html">Favoritos</a>
@@ -19,13 +23,15 @@
                 <input type="text" id="search-input" placeholder="Buscar jogos..." required>
                 <button type="submit">🔍</button>
             </form>
-            <button id="theme-toggle" aria-label="Alternar tema">☀️</button>
+            <!-- TAREFA 4: Ícone do tema (emoji removido, JS irá preencher) -->
+            <button id="theme-toggle" aria-label="Alternar tema"></button>
         </div>
     </header>
 
     <main class="container">
         <h1 id="search-title">Resultados para: <span id="search-term"></span></h1>
 
+        <!-- TAREFA 3: Filtros atualizados -->
         <div class="filters-panel">
             <div class="filter-group">
                 <label for="genre-filter">Filtrar por Gênero:</label>
@@ -36,7 +42,26 @@
                     <option value="Strategy">Estratégia</option>
                     <option value="Racing">Corrida</option>
                     <option value="Indie">Indie</option>
+                    <option value="Adventure">Aventura</option>
+                    <option value="Shooter">Shooter</option>
+                    <option value="Puzzle">Puzzle</option>
                 </select>
+            </div>
+            <div class="filter-group">
+                <label for="platform-filter">Filtrar por Plataforma:</label>
+                <select id="platform-filter">
+                    <option value="">Todas as Plataformas</option>
+                    <option value="PC">PC (Windows)</option>
+                    <option value="PlayStation">PlayStation</option>
+                    <option value="Xbox">Xbox</option>
+                    <option value="Switch">Nintendo Switch</option>
+                    <option value="Linux">Linux</option>
+                    <option value="macOS">macOS</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="date-filter">Lançado após:</label>
+                <input type="date" id="date-filter" class="date-input">
             </div>
         </div>
 
@@ -46,7 +71,7 @@
 
         <div id="empty-results" style="display: none; text-align: center; padding: 50px;">
             <h3>Nenhum jogo encontrado!</h3>
-            <p>Tente buscar por outro termo ou explore nossos favoritos.</p>
+            <p>Tente buscar por outro termo ou ajuste os filtros.</p>
             <a href="index.html" style="color: var(--accent-color); font-weight: bold; margin-top: 15px; display: inline-block;">← Voltar ao Início</a>
         </div>
 
@@ -56,7 +81,8 @@
         <div class="container footer-content">
             <small>&copy; 2025 Gamepedia. Todos os direitos reservados.</small>
             <small>Dados fornecidos por <a href="https://www.igdb.com/api" target="_blank">IGDB API</a></small>
-            <button id="theme-toggle-footer" aria-label="Alternar tema">🌙</button>
+            <!-- TAREFA 4: Ícone do tema (emoji removido, JS irá preencher) -->
+            <button id="theme-toggle-footer" aria-label="Alternar tema"></button>
         </div>
     </footer>
 

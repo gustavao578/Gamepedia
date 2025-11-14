@@ -6,11 +6,16 @@
     <title>Gamepedia | Meus Favoritos</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="dark-mode">
+<!-- Adicionado ID para JS detectar a página -->
+<body id="page-favoritos" class="dark-mode"> 
 
     <header id="global-header">
         <div class="container header-content">
-            <div class="marca">🎮 Gamepedia</div>
+            <!-- TAREFA 4: Logo SVG adicionada -->
+            <a href="index.html" class="marca">
+                <img src="assets/images/logo.svg" alt="Gamepedia Logo" class="logo">
+                Gamepedia
+            </a>
             <nav>
                 <a href="index.html">Início</a>
                 <a href="favoritos.html">Favoritos</a>
@@ -19,7 +24,8 @@
                 <input type="text" id="search-input" placeholder="Buscar jogos..." required>
                 <button type="submit">🔍</button>
             </form>
-            <button id="theme-toggle" aria-label="Alternar tema">☀️</button>
+            <!-- TAREFA 4: Ícone do tema (emoji removido, JS irá preencher) -->
+            <button id="theme-toggle" aria-label="Alternar tema"></button>
         </div>
     </header>
 
@@ -41,7 +47,8 @@
         <div class="container footer-content">
             <small>&copy; 2025 Gamepedia. Todos os direitos reservados.</small>
             <small>Dados fornecidos por <a href="https://www.igdb.com/api" target="_blank">IGDB API</a></small>
-            <button id="theme-toggle-footer" aria-label="Alternar tema">🌙</button>
+            <!-- TAREFA 4: Ícone do tema (emoji removido, JS irá preencher) -->
+            <button id="theme-toggle-footer" aria-label="Alternar tema"></button>
         </div>
     </footer>
 

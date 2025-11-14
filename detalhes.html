@@ -9,8 +9,12 @@
 <body class="dark-mode">
 
     <header id="global-header">
+        <!-- ... SEU HEADER EXISTENTE ... -->
         <div class="container header-content">
-            <div class="marca">🎮 Gamepedia</div>
+            <a href="index.html" class="marca">
+                <img src="assets/images/logo.svg" alt="Gamepedia Logo" class="logo">
+                Gamepedia
+            </a>
             <nav>
                 <a href="index.html">Início</a>
                 <a href="favoritos.html">Favoritos</a>
@@ -19,7 +23,7 @@
                 <input type="text" id="search-input" placeholder="Buscar jogos..." required>
                 <button type="submit">🔍</button>
             </form>
-            <button id="theme-toggle" aria-label="Alternar tema">☀️</button>
+            <button id="theme-toggle" aria-label="Alternar tema"></button>
         </div>
     </header>
 
@@ -28,55 +32,110 @@
             <h2>Carregando detalhes do jogo...</h2>
         </div>
 
+        <!-- O CONTEÚDO AGORA SEGUE A ESTRUTURA DE 7 BLOCOS -->
         <section id="game-details-content" style="display: none;">
 
-            <div class="detail-header">
-                <h1 id="game-title">Nome do Jogo</h1>
-                <button id="favorite-toggle" class="favorite-btn" aria-label="Adicionar aos favoritos">
-                    <span id="favorite-icon">🤍</span> Favoritar
-                </button>
-            </div>
+            <!-- BLOCo 1: INFORMAÇÕES PRINCIPAIS -->
+            <section id="main-info">
+                <div class="detail-header">
+                    <h1 id="game-title">Nome do Jogo</h1>
+                    <button id="favorite-toggle" class="favorite-btn" aria-label="Adicionar aos favoritos">
+                        <span id="favorite-icon">🤍</span> Favoritar
+                    </button>
+                </div>
 
-            <div class="detail-metadata">
-                <span id="game-rating" class="rating-tag">⭐ N/A</span>
-                <span id="game-release">Lançamento: N/A</span>
-                <span id="game-genres">Gêneros: N/A</span>
-            </div>
-
-            <div class="detail-body">
-                <img id="game-cover" src="https://via.placeholder.com/300x400?text=No+Image" alt="Capa do Jogo" class="detail-cover">
-                <div class="detail-description">
-                    <div>
-                        <h3 class="section-title">📖 Resumo</h3>
-                        <p id="game-summary">Sem descrição disponível.</p>
+                <div class="main-info-grid">
+                    <div class="main-image-container">
+                        <img id="main-image" class="detail-cover" src="https://placehold.co/300x400/1F1F1F/EAEAEA?text=No+Image" alt="Capa do Jogo">
                     </div>
-
-                    <div>
-                        <h3 class="section-title">🖥️ Plataformas</h3>
-                        <p id="game-platforms">N/A</p>
-                    </div>
-
-                    <div>
-                        <h3 class="section-title">👨‍💼 Desenvolvedora</h3>
-                        <p id="game-developer">N/A</p>
+                    <div class="main-details">
+                        <div id="rating-container" class="rating-container">
+                            <!-- JS vai preencher -->
+                        </div>
+                        <ul class="info-list">
+                            <li><strong>Metacritic:</strong> <span id="metacritic-score">N/A</span></li>
+                            <li><strong>Gêneros:</strong> <span id="genres">N/A</span></li>
+                            <li><strong>Plataformas:</strong> <span id="platforms">N/A</span></li>
+                            <li><strong>Lançamento:</strong> <span id="release-date">N/A</span></li>
+                            <li><strong>Desenvolvedor:</strong> <span id="developers">N/A</span></li>
+                            <li><strong>Publisher:</strong> <span id="publishers">N/A</span></li>
+                        </ul>
                     </div>
                 </div>
-            </div>
+            </section>
+
+            <!-- BLOCO 2: DESCRIÇÃO -->
+            <section id="description" class="media-section">
+                <h2 class="section-title">📖 Descrição</h2>
+                <p id="description-text">Carregando...</p>
+            </section>
+
+            <!-- BLOCO 3: DADOS ADICIONAIS -->
+            <section id="additional-data" class="media-section">
+                <h2 class="section-title">📊 Dados Adicionais</h2>
+                <ul class="info-list">
+                    <li><strong>Tempo de Jogo:</strong> <span id="playtime">N/A</span> horas</li>
+                    <li><strong>Website:</strong> <span id="website-link">N/A</span></li>
+                </ul>
+                <h3 class="section-title" style="font-size: 1.2em; margin-top: 20px;">Tags</h3>
+                <div id="tags-container" class="tags-container">
+                    <!-- JS vai preencher -->
+                </div>
+            </section>
+
+            <!-- BLOCO 4: GALERIA (SCREENSHOTS) -->
+            <section id="gallery" class="media-section">
+                <h2 class="section-title">🖼️ Galeria</h2>
+                <div id="screenshots-grid" class="screenshots-container">
+                    <!-- JS vai preencher -->
+                </div>
+            </section>
+
+            <!-- BLOCO 5: TRAILERS (VÍDEOS) -->
+            <section id="trailers" class="media-section">
+                <h2 class="section-title">🎬 Trailers</h2>
+                <div id="trailers-list" class="trailers-container">
+                    <!-- JS vai preencher -->
+                </div>
+            </section>
+
+            <!-- BLOCO 6: AVALIAÇÕES (REVIEWS) -->
+            <section id="reviews" class="media-section">
+                <h2 class="section-title">⭐ Avaliações</h2>
+                <h3>Nota (Baseado em <span id="ratings-count">0</span> votos)</h3>
+                <div id="rating-breakdown" class="rating-breakdown">
+                    <!-- JS vai preencher -->
+                </div>
+                <h3 style="margin-top: 30px;">Reviews de Usuários</h3>
+                <div id="user-reviews">
+                    <!-- JS vai preencher -->
+                </div>
+            </section>
+
+            <!-- BLOCO 7: JOGOS SIMILARES (SUGGESTED) -->
+            <section id="similar-games" class="media-section">
+                <h2 class="section-title">🔁 Jogos Similares</h2>
+                <div id="similar-games-grid" class="game-list"> <!-- Reutiliza a classe .game-list -->
+                    <!-- JS vai preencher -->
+                </div>
+            </section>
 
         </section>
 
     </main>
 
     <footer>
+        <!-- ... SEU FOOTER EXISTENTE ... -->
         <div class="container footer-content">
             <small>&copy; 2025 Gamepedia. Todos os direitos reservados.</small>
-            <small>Dados fornecidos por <a href="https://www.igdb.com/api" target="_blank">IGDB API</a></small>
-            <button id="theme-toggle-footer" aria-label="Alternar tema">🌙</button>
+            <small>Dados fornecidos por <a href="https://rawg.io/apidocs" target="_blank">RAWG.io API</a></small>
+            <button id="theme-toggle-footer" aria-label="Alternar tema"></button>
         </div>
     </footer>
 
     <script src="assets/js/services/api.js"></script>
-    <script src="assets/js/main.js"></script>
+    <!-- CORREÇÃO: O caminho estava "assets.js/main.js" e foi corrigido para "assets/js/main.js" -->
+    <script src="assets/js/main.js"></script> 
     <script src="assets/js/pages/detalhes.js"></script>
 </body>
 </html>
