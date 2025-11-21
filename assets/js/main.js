@@ -116,8 +116,8 @@ const Theme = {
     updateIcons() {
         const isDark = Storage.getTheme() === 'dark';
         // Mostra o ícone do *oposto* para indicar a ação de clique
-        const sunIcon = '<img src="assets/images/sun-icon.svg" alt="Mudar para Modo Claro" class="theme-icon">';
-        const moonIcon = '<img src="assets/images/moon-icon.svg" alt="Mudar para Modo Escuro" class="theme-icon">';
+        const sunIcon = '<img src="assets/images/sunicon.png" alt="Mudar para Modo Claro" class="theme-icon">';
+        const moonIcon = '<img src="assets/images/luaicon.jpg" alt="Mudar para Modo Escuro" class="theme-icon">';
         
         const icon = isDark ? sunIcon : moonIcon;
         
@@ -159,66 +159,7 @@ const Search = {
 // ==================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    const authButton = document.getElementById('auth-button');
-    const authMenu = document.getElementById('auth-menu');
-
-    function getUser() {
-        try { return JSON.parse(localStorage.getItem('gamepedia_user')); }
-        catch { return null; }
-    }
-
-    function renderAuth() {
-        const user = getUser();
-        if (!authButton) return;
-        if (user && user.username) {
-            authButton.textContent = user.username;
-            authButton.classList.add('logged-in');
-            if (authMenu) {
-                authMenu.innerHTML = `
-                    <a href="perfil.html" class="auth-link">Ver Perfil</a>
-                    <button id="logout-btn" class="auth-logout">Sair</button>
-                `;
-            }
-        } else {
-            authButton.textContent = 'Entrar';
-            authButton.classList.remove('logged-in');
-            if (authMenu) {
-                authMenu.innerHTML = `
-                    <a href="login.html" class="auth-link">Entrar</a>
-                    <a href="cadastro.html" class="auth-link">Criar Conta</a>
-                `;
-            }
-        }
-    }
-
-    // abrir/fechar menu ao clicar
-    authButton && authButton.addEventListener('click', (e) => {
-        const user = getUser();
-        if (!authMenu) {
-            if (!user) window.location.href = 'login.html';
-            return;
-        }
-        authMenu.style.display = authMenu.style.display === 'block' ? 'none' : 'block';
-    });
-
-    // fechar menu ao clicar fora
-    document.addEventListener('click', (e) => {
-        if (!authMenu || !authButton) return;
-        if (!authButton.contains(e.target) && !authMenu.contains(e.target)) {
-            authMenu.style.display = 'none';
-        }
-    });
-
-    // logout
-    document.addEventListener('click', (e) => {
-        if (e.target && e.target.id === 'logout-btn') {
-            localStorage.removeItem('gamepedia_user');
-            renderAuth();
-            authMenu.style.display = 'none';
-        }
-    });
-
+   
     Theme.init();
     Search.init();
-    renderAuth();
 });
