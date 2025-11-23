@@ -1,9 +1,9 @@
 /**
- * main.js - Utilidades Globais e Tema
+ * main.js - Utilidades Globais e Tema (Versão LocalStorage)
  */
 
 // ==================================================================
-// STORAGE - Local Storage Manager
+// STORAGE - Gerenciador de Dados (Apenas LocalStorage)
 // ==================================================================
 
 const Storage = {
@@ -31,6 +31,7 @@ const Storage = {
     },
 
     saveSearchTerm(term) {
+        // Restaurado para LocalStorage
         let searches = JSON.parse(localStorage.getItem('gamepedia_recentSearches') || '[]');
         searches = searches.filter(s => s !== term);
         searches.unshift(term);
@@ -39,6 +40,7 @@ const Storage = {
     },
 
     getTheme() {
+        // Restaurado para LocalStorage
         return localStorage.getItem('gamepedia_theme') || 'dark';
     },
 
@@ -54,16 +56,16 @@ const Storage = {
 const UI = {
     createGameCard(game) {
         const isFav = Storage.isFavorited(game.id);
-        const placeholder = 'https://placehold.co/220x300/1F1F1F/EAEAEA?text=No+Image';
-        const coverUrl = game.cover_url || placeholder;
+        const placeholder = 'https://placehold.co/300x400/1F1F1F/EAEAEA?text=No+Image';
+        const coverUrl = game.cover_url || game.background_image || placeholder;
 
         return `
             <div class="game-card" onclick="window.location.href='detalhes.html?id=${game.id}'">
                 <img src="${coverUrl}" alt="${game.name}" class="card-image" onerror="this.src='${placeholder}'">
                 <div class="card-info">
                     <h3 class="card-title">${game.name}</h3>
-                    <p class="card-platforms">${(game.platforms && game.platforms.join(', ')) || 'Multiplataforma'}</p>
-                    <span class="card-rating">⭐ ${(game.rating || 0).toFixed(0)}</span>
+                    <p class="card-platforms">${(game.platforms && Array.isArray(game.platforms) ? game.platforms.join(', ') : 'Multiplataforma')}</p>
+                    <span class="card-rating">⭐ ${(game.rating || 0).toFixed(1)}</span>
                 </div>
                 <span class="favorite-icon" data-id="${game.id}" onclick="event.stopPropagation(); UI.toggleFav(this)">${isFav ? '❤️' : '🤍'}</span>
             </div>
@@ -75,11 +77,8 @@ const UI = {
         const isNowFav = Storage.toggleFavorite(gameId);
         element.textContent = isNowFav ? '❤️' : '🤍';
 
-        // Atualiza a lista de favoritos se estivermos na página de favoritos
         if (document.body.id === 'page-favoritos' && !isNowFav) {
-             // Remove o card da DOM
             element.closest('.game-card').remove();
-            // Verifica se a lista ficou vazia
             const list = document.getElementById('favorites-list');
             if (list && list.children.length === 0) {
                 document.getElementById('empty-message').style.display = 'block';
@@ -100,8 +99,9 @@ const Theme = {
     },
 
     apply(theme) {
-        document.body.className = '';
+        document.body.classList.remove('dark-mode', 'light-mode');
         document.body.classList.add(theme + '-mode');
+        document.body.setAttribute('data-theme', theme);
         this.updateIcons();
     },
 
@@ -112,54 +112,62 @@ const Theme = {
         this.apply(newTheme);
     },
 
-    // ** TAREFA 4: Atualizado para usar SVGs **
     updateIcons() {
         const isDark = Storage.getTheme() === 'dark';
-        // Mostra o ícone do *oposto* para indicar a ação de clique
-        const sunIcon = '<img src="assets/images/sunicon.png" alt="Mudar para Modo Claro" class="theme-icon">';
-        const moonIcon = '<img src="assets/images/luaicon.jpg" alt="Mudar para Modo Escuro" class="theme-icon">';
+        const sunIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+        const moonIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
         
         const icon = isDark ? sunIcon : moonIcon;
         
-        document.querySelectorAll('[id*="theme-toggle"]').forEach(btn => {
+        document.querySelectorAll('#theme-toggle, #theme-toggle-footer').forEach(btn => {
             btn.innerHTML = icon;
+            btn.setAttribute('aria-label', isDark ? 'Mudar para tema claro' : 'Mudar para tema escuro');
         });
     },
 
     setupToggleButtons() {
-        document.querySelectorAll('[id*="theme-toggle"]').forEach(btn => {
-            btn.addEventListener('click', () => this.toggle());
+        const buttons = document.querySelectorAll('#theme-toggle, #theme-toggle-footer');
+        buttons.forEach(btn => {
+            // Clone para remover listeners antigos
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            newBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.toggle();
+            });
         });
+        this.updateIcons();
     }
 };
 
 // ==================================================================
-// BUSCA - Search Handler
+// BUSCA
 // ==================================================================
 
 const Search = {
     init() {
         const searchForm = document.getElementById('search-form');
-        if (searchForm) {
+        const searchInput = document.getElementById('search-input');
+
+        if (searchForm && searchInput) {
             searchForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const input = document.getElementById('search-input');
-                const term = input.value.trim();
-                if (term) {
-                    Storage.saveSearchTerm(term);
-                    window.location.href = `resultados.html?search=${encodeURIComponent(term)}`;
-                }
+                this.performSearch(searchInput.value);
             });
+        }
+    },
+
+    performSearch(term) {
+        const cleanTerm = term.trim();
+        if (cleanTerm) {
+            Storage.saveSearchTerm(cleanTerm);
+            window.location.href = `resultados.html?search=${encodeURIComponent(cleanTerm)}`;
         }
     }
 };
 
-// ==================================================================
-// INICIALIZAÇÃO
-// ==================================================================
-
 document.addEventListener('DOMContentLoaded', () => {
-   
     Theme.init();
     Search.init();
 });

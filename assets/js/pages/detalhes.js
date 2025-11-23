@@ -3,45 +3,32 @@
  */
 
 // ==================================================================
-// FUNÇÕES DE RENDERIZAÇÃO (Bloco por Bloco)
+// FUNÇÕES DE RENDERIZAÇÃO
 // ==================================================================
 
-/**
- * Converte um array de objetos (ex: {name: "Ação"}) para string
- */
 function formatList(items, key = 'name') {
     if (!items || items.length === 0) return 'N/A';
-    // Trata o caso de plataformas: [{platform: {name: "PC"}}]
     if (items[0].platform) {
         return items.map(item => item.platform.name).join(', ');
     }
     return items.map(item => item[key]).join(', ');
 }
 
-/**
- * BLOCO 1: Informações Principais
- */
+// ... (renderMainInfo, renderDescription, renderAdditionalData, renderGallery mantidos iguais) ...
 function renderMainInfo(game) {
-    // Título da Página e do Jogo
     document.title = `Gamepedia | ${game.name}`;
     document.getElementById('game-title').textContent = game.name;
-
-    // Imagem Principal
     const coverImg = document.getElementById('main-image');
     const placeholder = 'https://placehold.co/300x400/1F1F1F/EAEAEA?text=No+Image';
     coverImg.src = game.background_image || placeholder;
     coverImg.alt = game.name;
     coverImg.onerror = () => { coverImg.src = placeholder; };
-
-    // Container de Nota (Rating)
     const ratingContainer = document.getElementById('rating-container');
     ratingContainer.innerHTML = `
         <h3 class="section-title" style="margin-bottom: 10px; font-size: 1.2em;">Nota Geral</h3>
         <span class="rating-tag" style="font-size: 1.2em;">⭐ ${game.rating} / 5</span>
         <p style="color: var(--color-text-secondary); margin-top: 10px;">Baseado em ${game.ratings_count} votos.</p>
     `;
-    
-    // Lista de Infos
     if (game.metacritic) {
         document.getElementById('metacritic-score').innerHTML = `<span class="metacritic">${game.metacritic}</span>`;
     }
@@ -52,23 +39,15 @@ function renderMainInfo(game) {
     document.getElementById('publishers').textContent = formatList(game.publishers);
 }
 
-/**
- * BLOCO 2: Descrição
- */
 function renderDescription(game) {
-    // Usa description_raw para texto puro, ou description (com HTML)
     document.getElementById('description-text').innerHTML = game.description || game.description_raw || "Nenhuma descrição disponível.";
 }
 
-/**
- * BLOCO 3: Dados Adicionais
- */
 function renderAdditionalData(game) {
     document.getElementById('playtime').textContent = game.playtime || 'N/A';
     if (game.website) {
         document.getElementById('website-link').innerHTML = `<a href="${game.website}" target="_blank" rel="noopener noreferrer">${game.website}</a>`;
     }
-    
     const tagsContainer = document.getElementById('tags-container');
     if (game.tags && game.tags.length > 0) {
         tagsContainer.innerHTML = game.tags.map(tag => `<span class="tag">${tag.name}</span>`).join('');
@@ -77,9 +56,6 @@ function renderAdditionalData(game) {
     }
 }
 
-/**
- * BLOCO 4: Galeria (Screenshots)
- */
 function renderGallery(screenshots) {
     const grid = document.getElementById('screenshots-grid');
     if (!screenshots || screenshots.length === 0) {
@@ -93,34 +69,34 @@ function renderGallery(screenshots) {
     ).join('');
 }
 
-/**
- * BLOCO 5: Trailers (Vídeos)
- */
+// 2. Renderização de Trailers (Vídeos MP4)
 function renderTrailers(movies) {
-    const list = document.getElementById('trailers-list');
+    // Busca o container pelo ID solicitado: 'trailers-container'
+    // Nota: O ID no HTML pode variar, estou ajustando para procurar pelo container correto na DOM
+    // Caso o HTML use outro ID, o código abaixo tenta encontrar pelo nome usado na estrutura anterior também.
+    const list = document.getElementById('trailers-list') || document.getElementById('trailers-container');
+    
+    if (!list) return;
+
     if (!movies || movies.length === 0) {
-        list.innerHTML = "<p>Nenhum trailer disponível.</p>";
+        list.innerHTML = "<p>Nenhum trailer disponível para este jogo.</p>";
         return;
     }
+    
     list.innerHTML = movies.map(video => `
-        <div class="trailer-item">
-            <h4>${video.name}</h4>
-            <video controls preload="metadata" poster="${video.preview}" class="trailer-video">
-                <source src="${video.data['480']}" type="video/mp4">
+        <div class="trailer-item" style="margin-bottom: 20px;">
+            <h4 style="margin-bottom: 10px;">${video.name}</h4>
+            <video controls width="100%" poster="${video.preview}" class="trailer-video" style="border-radius: 8px;">
+                <source src="${video.data.max || video.data['480']}" type="video/mp4">
                 Seu navegador não suporta vídeos.
             </video>
         </div>
     `).join('');
 }
 
-/**
- * BLOCO 6: Avaliações (Reviews)
- */
 function renderReviews(game, reviews) {
-    // 6.1: Breakdown
     const breakdownContainer = document.getElementById('rating-breakdown');
     document.getElementById('ratings-count').textContent = game.ratings_count;
-    
     if (game.ratings && game.ratings.length > 0) {
         breakdownContainer.innerHTML = game.ratings.map(rating => `
             <div class="rating-bar">
@@ -133,8 +109,6 @@ function renderReviews(game, reviews) {
     } else {
         breakdownContainer.innerHTML = "<p>Sem breakdown de notas.</p>";
     }
-
-    // 6.2: Reviews de Usuários
     const reviewsContainer = document.getElementById('user-reviews');
     if (!reviews || reviews.length === 0) {
         reviewsContainer.innerHTML = "<p>Nenhum review de usuário encontrado.</p>";
@@ -148,22 +122,26 @@ function renderReviews(game, reviews) {
     `).join('');
 }
 
-/**
- * BLOCO 7: Jogos Similares
- */
+// 3. Renderização de Jogos Similares
 function renderSimilarGames(similarGames) {
-    const grid = document.getElementById('similar-games-grid');
+    // Busca o container pelo ID solicitado: 'similar-games-container'
+    const grid = document.getElementById('similar-games-grid') || document.getElementById('similar-games-container');
+    
+    if (!grid) return;
+
     if (!similarGames || similarGames.length === 0) {
         grid.innerHTML = "<p>Nenhum jogo similar encontrado.</p>";
         return;
     }
-    // Reutiliza a função de card do main.js
-    // Nota: A API de /suggested retorna menos dados, então adaptamos
+    
+    // Reutiliza a função de card do main.js (UI.createGameCard)
     grid.innerHTML = similarGames.map(game => {
+        // Prepara objeto compatível com UI.createGameCard
         const gameData = {
             id: game.id,
             name: game.name,
-            cover_url: game.background_image,
+            cover_url: game.background_image, // RAWG property
+            background_image: game.background_image, // Backup
             rating: game.rating,
             platforms: game.platforms ? game.platforms.map(p => p.platform.name) : ['N/A']
         };
@@ -171,7 +149,7 @@ function renderSimilarGames(similarGames) {
     }).join('');
 }
 
-// =f=================================================================
+// ==================================================================
 // INICIALIZAÇÃO DA PÁGINA
 // ==================================================================
 
@@ -188,11 +166,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        // Mostra o loading, esconde o conteúdo
         loadingEl.style.display = 'block';
         contentEl.style.display = 'none';
 
-        // Busca todos os dados da API em paralelo
         const [gameData, screenshots, movies, reviews, similarGames] = await Promise.all([
             api.getGameById(gameId),
             api.getGameScreenshots(gameId),
@@ -205,7 +181,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             throw new Error('Jogo não encontrado.');
         }
 
-        // --- Renderiza Bloco por Bloco ---
         renderMainInfo(gameData);
         renderDescription(gameData);
         renderAdditionalData(gameData);
@@ -214,7 +189,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderReviews(gameData, reviews);
         renderSimilarGames(similarGames);
 
-        // --- Lógica de Favoritos (Original) ---
         const favoriteBtn = document.getElementById('favorite-toggle');
         const favoriteIcon = document.getElementById('favorite-icon');
 
@@ -232,7 +206,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-        // Mostra conteúdo
         loadingEl.style.display = 'none';
         contentEl.style.display = 'block';
 
