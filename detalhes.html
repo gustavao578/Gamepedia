@@ -6,24 +6,25 @@
     <title id="page-title">Gamepedia | Detalhes do Jogo</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="dark-mode">
+<body class="dark-mode" data-theme="dark">
 
     <header id="global-header">
-        <!-- ... SEU HEADER EXISTENTE ... -->
         <div class="container header-content">
             <a href="index.html" class="marca">
-                <img src="assets/images/Logo.png" alt="Gamepedia Logo" class="logo">
+                <img src="assets/images/logo.svg" alt="Gamepedia Logo" class="logo">
                 Gamepedia
             </a>
+            
+            <form id="search-form" class="search-bar">
+                <input type="text" id="search-input" placeholder="Buscar jogos..." required aria-label="Buscar jogos">
+                <button type="submit" aria-label="Pesquisar">🔍</button>
+            </form>
+
             <nav>
                 <a href="index.html">Início</a>
                 <a href="favoritos.html">Favoritos</a>
+                <button id="theme-toggle" class="nav-btn" aria-label="Alternar tema"></button>
             </nav>
-            <form id="search-form" class="search-bar">
-                <input type="text" id="search-input" placeholder="Buscar jogos..." required>
-                <button type="submit">Buscar</button>
-            </form>
-            <button id="theme-toggle" aria-label="Alternar tema"></button>
         </div>
     </header>
 
@@ -32,10 +33,8 @@
             <h2>Carregando detalhes do jogo...</h2>
         </div>
 
-        <!-- O CONTEÚDO AGORA SEGUE A ESTRUTURA DE 7 BLOCOS -->
         <section id="game-details-content" style="display: none;">
 
-            <!-- BLOCo 1: INFORMAÇÕES PRINCIPAIS -->
             <section id="main-info">
                 <div class="detail-header">
                     <h1 id="game-title">Nome do Jogo</h1>
@@ -50,7 +49,6 @@
                     </div>
                     <div class="main-details">
                         <div id="rating-container" class="rating-container">
-                            <!-- JS vai preencher -->
                         </div>
                         <ul class="info-list">
                             <li><strong>Metacritic:</strong> <span id="metacritic-score">N/A</span></li>
@@ -64,59 +62,47 @@
                 </div>
             </section>
 
-            <!-- BLOCO 2: DESCRIÇÃO -->
             <section id="description" class="media-section">
-                <h2 class="section-title">Descrição</h2>
+                <h2 class="section-title">📖 Descrição</h2>
                 <p id="description-text">Carregando...</p>
             </section>
 
-            <!-- BLOCO 3: DADOS ADICIONAIS -->
             <section id="additional-data" class="media-section">
-                <h2 class="section-title">Dados Adicionais</h2>
+                <h2 class="section-title">📊 Dados Adicionais</h2>
                 <ul class="info-list">
                     <li><strong>Tempo de Jogo:</strong> <span id="playtime">N/A</span> horas</li>
                     <li><strong>Website:</strong> <span id="website-link">N/A</span></li>
                 </ul>
                 <h3 class="section-title" style="font-size: 1.2em; margin-top: 20px;">Tags</h3>
                 <div id="tags-container" class="tags-container">
-                    <!-- JS vai preencher -->
                 </div>
             </section>
 
-            <!-- BLOCO 4: GALERIA (SCREENSHOTS) -->
             <section id="gallery" class="media-section">
-                <h2 class="section-title">Galeria</h2>
+                <h2 class="section-title">🖼️ Galeria</h2>
                 <div id="screenshots-grid" class="screenshots-container">
-                    <!-- JS vai preencher -->
                 </div>
             </section>
 
-            <!-- BLOCO 5: TRAILERS (VÍDEOS) -->
             <section id="trailers" class="media-section">
                 <h2 class="section-title">🎬 Trailers</h2>
-                <div id="trailers-list" class="trailers-container">
-                    <!-- JS vai preencher -->
+                <div id="trailers-container" class="trailers-container">
                 </div>
             </section>
 
-            <!-- BLOCO 6: AVALIAÇÕES (REVIEWS) -->
             <section id="reviews" class="media-section">
-                <h2 class="section-title">Avaliações</h2>
+                <h2 class="section-title">⭐ Avaliações</h2>
                 <h3>Nota (Baseado em <span id="ratings-count">0</span> votos)</h3>
                 <div id="rating-breakdown" class="rating-breakdown">
-                    <!-- JS vai preencher -->
                 </div>
                 <h3 style="margin-top: 30px;">Reviews de Usuários</h3>
-                <div id="user-reviews"><br>
-                    <!-- JS vai preencher -->
+                <div id="user-reviews">
                 </div>
             </section>
 
-            <!-- BLOCO 7: JOGOS SIMILARES (SUGGESTED) -->
             <section id="similar-games" class="media-section">
-                <h2 class="section-title">Jogos Similares</h2>
-                <div id="similar-games-grid" class="game-list"> <!-- Reutiliza a classe .game-list -->
-                    <!-- JS vai preencher -->
+                <h2 class="section-title">🔁 Jogos Similares</h2>
+                <div id="similar-games-grid" class="game-list">
                 </div>
             </section>
 
@@ -125,16 +111,14 @@
     </main>
 
     <footer>
-        <!-- ... SEU FOOTER EXISTENTE ... -->
         <div class="container footer-content">
             <small>&copy; 2025 Gamepedia. Todos os direitos reservados.</small>
             <small>Dados fornecidos por <a href="https://rawg.io/apidocs" target="_blank">RAWG.io API</a></small>
-            <button id="theme-toggle-footer" aria-label="Alternar tema"></button>
+            <button id="theme-toggle-footer" class="nav-btn" aria-label="Alternar tema"></button>
         </div>
     </footer>
 
     <script src="assets/js/services/api.js"></script>
-    <!-- CORREÇÃO: O caminho estava "assets.js/main.js" e foi corrigido para "assets/js/main.js" -->
     <script src="assets/js/main.js"></script> 
     <script src="assets/js/pages/detalhes.js"></script>
 </body>

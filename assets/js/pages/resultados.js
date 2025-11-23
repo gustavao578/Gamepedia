@@ -1,5 +1,5 @@
 /**
- * resultados.js - Página de Resultados de Busca
+ * resultados.js - Página de Resultados de Busca (Com Modal)
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -9,23 +9,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     const resultsList = document.getElementById('results-list');
     const emptyResults = document.getElementById('empty-results');
     
-    // ** TAREFA 3: Novos elementos de filtro **
+    // Elementos do Modal
+    const modal = document.getElementById('filters-modal');
+    const openBtn = document.getElementById('open-filters-btn');
+    const closeBtn = document.querySelector('.close-modal');
+    const applyBtn = document.getElementById('apply-filters-btn');
+
+    // Inputs de Filtro
     const genreFilter = document.getElementById('genre-filter');
     const platformFilter = document.getElementById('platform-filter');
     const dateFilter = document.getElementById('date-filter');
 
     if (!resultsList) return;
 
-    document.getElementById('search-term').textContent = searchTerm;
+    // Preenche termo de busca
+    const termDisplay = document.getElementById('search-term');
+    if(termDisplay) termDisplay.textContent = searchTerm;
     if (searchInput) searchInput.value = searchTerm;
 
-    let allResults = []; // Cache para evitar buscas repetidas ao filtrar
+    let allResults = []; // Cache dos resultados
 
+    // --- Lógica de Renderização ---
     async function renderResults() {
         resultsList.innerHTML = '<p>Carregando...</p>';
+        emptyResults.style.display = 'none';
+        resultsList.style.display = 'grid';
 
         try {
-            // Só busca na API se allResults estiver vazio
+            // Busca na API se ainda não buscou
             if (allResults.length === 0) {
                 allResults = await api.searchGames(searchTerm);
             }
@@ -36,34 +47,35 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            // ** TAREFA 3: Lógica de filtragem atualizada **
+            // Aplica Filtros
             const selectedGenre = genreFilter?.value;
             const selectedPlatform = platformFilter?.value;
             const selectedDate = dateFilter?.value;
-
+ 
             const filterDate = selectedDate ? new Date(selectedDate) : null;
-            if(filterDate) filterDate.setHours(0,0,0,0); // Normaliza data
+            if(filterDate) filterDate.setHours(0,0,0,0);
 
             const filteredResults = allResults.filter(game => {
                 // Filtro de Gênero
                 const matchGenre = !selectedGenre || 
                                  (game.genres && game.genres.some(g => g.toLowerCase() === selectedGenre.toLowerCase()));
 
-                // Filtro de Plataforma (busca parcial)
+                // Filtro de Plataforma
                 const matchPlatform = !selectedPlatform ||
                                     (game.platforms && game.platforms.some(p => p.toLowerCase().includes(selectedPlatform.toLowerCase())));
 
-                // Filtro de Data (Lançado após a data selecionada)
-                const gameDate = game.release_date ? new Date(game.release_date * 1000) : null;
+                // Filtro de Data
+                const gameDate = game.release_date ? new Date(game.release_date) : null;
                 const matchDate = !filterDate || (gameDate && gameDate >= filterDate);
 
                 return matchGenre && matchPlatform && matchDate;
             });
 
-
             if (filteredResults.length === 0) {
                 resultsList.style.display = 'none';
                 emptyResults.style.display = 'block';
+                // Atualiza mensagem para indicar que filtros ocultaram tudo
+                emptyResults.querySelector('h3').textContent = "Nenhum jogo com esses filtros.";
             } else {
                 resultsList.style.display = 'grid';
                 emptyResults.style.display = 'none';
@@ -77,17 +89,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // --- Controles do Modal ---
+    if (openBtn && modal) {
+        openBtn.addEventListener('click', () => {
+            modal.style.display = 'block';
+        });
+    }
+
+    if (closeBtn && modal) {
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+    }
+
+    window.addEventListener('click', (event) => {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    // Botão "Aplicar" do Modal
+    if (applyBtn) {
+        applyBtn.addEventListener('click', () => {
+            renderResults(); // Re-renderiza com os valores atuais dos inputs
+            modal.style.display = 'none'; // Fecha modal
+        });
+    }
+
     // Renderização inicial
     renderResults();
-
-    // ** TAREFA 3: Adiciona listeners para novos filtros **
-    if (genreFilter) {
-        genreFilter.addEventListener('change', renderResults);
-    }
-    if (platformFilter) {
-        platformFilter.addEventListener('change', renderResults);
-    }
-    if (dateFilter) {
-        dateFilter.addEventListener('change', renderResults);
-    }
 });

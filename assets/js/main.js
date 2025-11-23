@@ -1,5 +1,5 @@
 /**
- * main.js - Utilidades Globais e Tema (Versão LocalStorage)
+ * main.js - Utilidades Globais e Tema (LocalStorage Puro)
  */
 
 // ==================================================================
@@ -31,7 +31,6 @@ const Storage = {
     },
 
     saveSearchTerm(term) {
-        // Restaurado para LocalStorage
         let searches = JSON.parse(localStorage.getItem('gamepedia_recentSearches') || '[]');
         searches = searches.filter(s => s !== term);
         searches.unshift(term);
@@ -40,7 +39,6 @@ const Storage = {
     },
 
     getTheme() {
-        // Restaurado para LocalStorage
         return localStorage.getItem('gamepedia_theme') || 'dark';
     },
 
@@ -119,7 +117,9 @@ const Theme = {
         
         const icon = isDark ? sunIcon : moonIcon;
         
-        document.querySelectorAll('#theme-toggle, #theme-toggle-footer').forEach(btn => {
+        // Atualiza TODOS os botões de tema encontrados
+        const buttons = document.querySelectorAll('#theme-toggle, #theme-toggle-footer');
+        buttons.forEach(btn => {
             btn.innerHTML = icon;
             btn.setAttribute('aria-label', isDark ? 'Mudar para tema claro' : 'Mudar para tema escuro');
         });
@@ -128,7 +128,6 @@ const Theme = {
     setupToggleButtons() {
         const buttons = document.querySelectorAll('#theme-toggle, #theme-toggle-footer');
         buttons.forEach(btn => {
-            // Clone para remover listeners antigos
             const newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
             

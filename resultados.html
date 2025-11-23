@@ -6,35 +6,60 @@
     <title>Gamepedia | Resultados de Busca</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body class="dark-mode">
+<body class="dark-mode" data-theme="dark">
 
     <header id="global-header">
         <div class="container header-content">
-            <!-- TAREFA 4: Logo SVG adicionada -->
             <a href="index.html" class="marca">
-                <img src="assets/images/Logo.png" alt="Gamepedia Logo" class="logo">
+                <img src="assets/images/logo.svg" alt="Gamepedia Logo" class="logo">
                 Gamepedia
             </a>
+            
+            <form id="search-form" class="search-bar">
+                <input type="text" id="search-input" placeholder="Buscar jogos..." required aria-label="Buscar jogos">
+                <button type="submit" aria-label="Pesquisar">🔍</button>
+            </form>
+
             <nav>
                 <a href="index.html">Início</a>
                 <a href="favoritos.html">Favoritos</a>
+                
+                <!-- TAREFA 1: Botão de Filtros na Navbar -->
+                <button id="open-filters-btn" class="nav-btn" title="Filtrar Busca">
+                    <!-- Ícone de Filtro SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                </button>
+
+                <!-- TAREFA 4: Botão de Tema Restaurado -->
+                <button id="theme-toggle" class="nav-btn" aria-label="Alternar tema"></button>
             </nav>
-            <form id="search-form" class="search-bar">
-                <input type="text" id="search-input" placeholder="Buscar jogos..." required>
-                <button type="submit">Buscar</button>
-            </form>
-            <!-- TAREFA 4: Ícone do tema (emoji removido, JS irá preencher) -->
-            <button id="theme-toggle" aria-label="Alternar tema"></button>
         </div>
     </header>
-
+<br><Br>
     <main class="container">
-        <h1 id="search-title">Resultados para: <span id="search-term"></span></h1>
+        <h1 id="search-title">Resultados para: <span id="search-term">...</span></h1>
 
-        <!-- TAREFA 3: Filtros atualizados -->
-        <div class="filters-panel">
+        <!-- TAREFA 6: Listagem Horizontal (Grid no CSS) -->
+        <section id="results-list" class="game-list">
+            <!-- Cards serão injetados aqui -->
+            <h3>Carregando resultados...</h3>
+        </section>
+
+        <div id="empty-results" style="display: none; text-align: center; padding: 50px;">
+            <h3>Nenhum jogo encontrado!</h3>
+            <p>Tente buscar por outro termo ou ajuste os filtros.</p>
+            <a href="index.html" style="color: var(--accent-color); font-weight: bold; margin-top: 15px; display: inline-block;">← Voltar ao Início</a>
+        </div>
+    </main>
+
+    <!-- TAREFA 1: Modal de Filtros -->
+    <div id="filters-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Filtrar Resultados</h2>
+            
             <div class="filter-group">
-                <label for="genre-filter">Filtrar por Gênero:</label>
+                <label for="genre-filter">Gênero</label>
                 <select id="genre-filter">
                     <option value="">Todos os Gêneros</option>
                     <option value="RPG">RPG</option>
@@ -47,8 +72,9 @@
                     <option value="Puzzle">Puzzle</option>
                 </select>
             </div>
+
             <div class="filter-group">
-                <label for="platform-filter">Filtrar por Plataforma:</label>
+                <label for="platform-filter">Plataforma</label>
                 <select id="platform-filter">
                     <option value="">Todas as Plataformas</option>
                     <option value="PC">PC (Windows)</option>
@@ -59,30 +85,22 @@
                     <option value="macOS">macOS</option>
                 </select>
             </div>
+
             <div class="filter-group">
-                <label for="date-filter">Lançado após:</label>
+                <label for="date-filter">Lançado após</label>
                 <input type="date" id="date-filter" class="date-input">
             </div>
+
+            <button id="apply-filters-btn" class="btn-apply-filters">Aplicar Filtros</button>
         </div>
+    </div>
 
-        <section id="results-list" class="game-list">
-            <h3>Carregando resultados...</h3>
-        </section>
-
-        <div id="empty-results" style="display: none; text-align: center; padding: 50px;">
-            <h3>Nenhum jogo encontrado!</h3>
-            <p>Tente buscar por outro termo ou ajuste os filtros.</p>
-            <a href="index.html" style="color: var(--accent-color); font-weight: bold; margin-top: 15px; display: inline-block;">← Voltar ao Início</a>
-        </div>
-
-    </main>
-
+    <!-- TAREFA 3: Footer visível -->
     <footer>
         <div class="container footer-content">
             <small>&copy; 2025 Gamepedia. Todos os direitos reservados.</small>
-            <small>Dados fornecidos por <a href="https://rawg.io/apidocs" target="_blank">RAWG API</a></small>
-            <!-- TAREFA 4: Ícone do tema (emoji removido, JS irá preencher) -->
-            <button id="theme-toggle-footer" aria-label="Alternar tema"></button>
+            <small>Dados fornecidos por <a href="https://rawg.io/apidocs" target="_blank">RAWG.io API</a></small>
+            <button id="theme-toggle-footer" class="nav-btn" aria-label="Alternar tema"></button>
         </div>
     </footer>
 
