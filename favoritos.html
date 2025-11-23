@@ -23,11 +23,14 @@
             <nav>
                 <a href="index.html">Início</a>
                 <a href="favoritos.html">Favoritos</a>
+                <button id="open-filters-btn" class="nav-btn" title="Filtrar Busca" aria-label="Abrir filtros">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+                </button>
                 <button id="theme-toggle" class="nav-btn" aria-label="Alternar tema"></button>
             </nav>
         </div>
     </header>
-<br><Br><br><br>
+
     <main class="container">
         <h2>❤️ Meus Jogos Favoritos</h2>
 
@@ -41,6 +44,48 @@
             <a href="index.html" style="color: var(--accent-color); font-weight: bold; font-size: 1.1em;">Explorar Jogos →</a>
         </div>
     </main>
+
+    <div id="filters-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Filtrar Busca</h2>
+            
+            <div class="filter-group">
+                <label for="genre-filter">Gênero</label>
+                <select id="genre-filter">
+                    <option value="">Todos os Gêneros</option>
+                    <option value="RPG">RPG</option>
+                    <option value="Action">Ação</option>
+                    <option value="Strategy">Estratégia</option>
+                    <option value="Racing">Corrida</option>
+                    <option value="Indie">Indie</option>
+                    <option value="Adventure">Aventura</option>
+                    <option value="Shooter">Shooter</option>
+                    <option value="Puzzle">Puzzle</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="platform-filter">Plataforma</label>
+                <select id="platform-filter">
+                    <option value="">Todas as Plataformas</option>
+                    <option value="PC">PC (Windows)</option>
+                    <option value="PlayStation">PlayStation</option>
+                    <option value="Xbox">Xbox</option>
+                    <option value="Switch">Nintendo Switch</option>
+                    <option value="Linux">Linux</option>
+                    <option value="macOS">macOS</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="year-filter">Ano de Lançamento</label>
+                <input type="number" id="year-filter" class="date-input" placeholder="Ex: 2020" min="1950" max="2030">
+            </div>
+
+            <button id="apply-filters-btn" class="btn-apply-filters">Aplicar Filtros</button>
+        </div>
+    </div>
 
     <footer>
         <div class="container footer-content">

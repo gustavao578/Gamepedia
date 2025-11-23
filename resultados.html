@@ -23,25 +23,18 @@
             <nav>
                 <a href="index.html">Início</a>
                 <a href="favoritos.html">Favoritos</a>
-                
-                <!-- TAREFA 1: Botão de Filtros na Navbar -->
-                <button id="open-filters-btn" class="nav-btn" title="Filtrar Busca">
-                    <!-- Ícone de Filtro SVG -->
+                <button id="open-filters-btn" class="nav-btn" title="Filtrar Busca" aria-label="Abrir filtros">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
                 </button>
-
-                <!-- TAREFA 4: Botão de Tema Restaurado -->
                 <button id="theme-toggle" class="nav-btn" aria-label="Alternar tema"></button>
             </nav>
         </div>
     </header>
-<br><Br>
+
     <main class="container">
         <h1 id="search-title">Resultados para: <span id="search-term">...</span></h1>
 
-        <!-- TAREFA 6: Listagem Horizontal (Grid no CSS) -->
         <section id="results-list" class="game-list">
-            <!-- Cards serão injetados aqui -->
             <h3>Carregando resultados...</h3>
         </section>
 
@@ -52,11 +45,10 @@
         </div>
     </main>
 
-    <!-- TAREFA 1: Modal de Filtros -->
     <div id="filters-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
-            <h2>Filtrar Resultados</h2>
+            <h2>Filtrar Busca</h2>
             
             <div class="filter-group">
                 <label for="genre-filter">Gênero</label>
@@ -87,15 +79,14 @@
             </div>
 
             <div class="filter-group">
-                <label for="date-filter">Lançado após</label>
-                <input type="date" id="date-filter" class="date-input">
+                <label for="year-filter">Ano de Lançamento</label>
+                <input type="number" id="year-filter" class="date-input" placeholder="Ex: 2020" min="1950" max="2030">
             </div>
 
             <button id="apply-filters-btn" class="btn-apply-filters">Aplicar Filtros</button>
         </div>
     </div>
 
-    <!-- TAREFA 3: Footer visível -->
     <footer>
         <div class="container footer-content">
             <small>&copy; 2025 Gamepedia. Todos os direitos reservados.</small>

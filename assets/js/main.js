@@ -3,7 +3,7 @@
  */
 
 // ==================================================================
-// STORAGE - Gerenciador de Dados (Apenas LocalStorage)
+// STORAGE
 // ==================================================================
 
 const Storage = {
@@ -55,14 +55,31 @@ const UI = {
     createGameCard(game) {
         const isFav = Storage.isFavorited(game.id);
         const placeholder = 'https://placehold.co/300x400/1F1F1F/EAEAEA?text=No+Image';
-        const coverUrl = game.cover_url || game.background_image || placeholder;
+        // RAWG usa 'background_image', nosso cache antigo pode usar 'cover_url'
+        const coverUrl = game.background_image || game.cover_url || placeholder;
+
+        // CORREÇÃO 3: Tratamento inteligente de Plataformas
+        // A API RAWG retorna array de objetos [{platform: {name: 'PC'}}]
+        // Às vezes passamos array de strings ['PC', 'Xbox']
+        let platformsText = 'Multiplataforma';
+        
+        if (game.platforms && Array.isArray(game.platforms) && game.platforms.length > 0) {
+            // Se o primeiro item for objeto com propriedade 'platform', é estrutura RAWG
+            if (game.platforms[0].platform) {
+                platformsText = game.platforms.map(p => p.platform.name).join(', ');
+            } 
+            // Se for string, usa direto
+            else if (typeof game.platforms[0] === 'string') {
+                platformsText = game.platforms.join(', ');
+            }
+        }
 
         return `
             <div class="game-card" onclick="window.location.href='detalhes.html?id=${game.id}'">
                 <img src="${coverUrl}" alt="${game.name}" class="card-image" onerror="this.src='${placeholder}'">
                 <div class="card-info">
                     <h3 class="card-title">${game.name}</h3>
-                    <p class="card-platforms">${(game.platforms && Array.isArray(game.platforms) ? game.platforms.join(', ') : 'Multiplataforma')}</p>
+                    <p class="card-platforms">${platformsText}</p>
                     <span class="card-rating">⭐ ${(game.rating || 0).toFixed(1)}</span>
                 </div>
                 <span class="favorite-icon" data-id="${game.id}" onclick="event.stopPropagation(); UI.toggleFav(this)">${isFav ? '❤️' : '🤍'}</span>
@@ -86,7 +103,7 @@ const UI = {
 };
 
 // ==================================================================
-// TEMA - Dark/Light Mode
+// TEMA
 // ==================================================================
 
 const Theme = {
@@ -117,9 +134,7 @@ const Theme = {
         
         const icon = isDark ? sunIcon : moonIcon;
         
-        // Atualiza TODOS os botões de tema encontrados
-        const buttons = document.querySelectorAll('#theme-toggle, #theme-toggle-footer');
-        buttons.forEach(btn => {
+        document.querySelectorAll('#theme-toggle, #theme-toggle-footer').forEach(btn => {
             btn.innerHTML = icon;
             btn.setAttribute('aria-label', isDark ? 'Mudar para tema claro' : 'Mudar para tema escuro');
         });
@@ -141,11 +156,12 @@ const Theme = {
 };
 
 // ==================================================================
-// BUSCA
+// BUSCA & FILTROS GLOBAIS
 // ==================================================================
 
 const Search = {
     init() {
+        // Barra de busca
         const searchForm = document.getElementById('search-form');
         const searchInput = document.getElementById('search-input');
 
@@ -155,13 +171,70 @@ const Search = {
                 this.performSearch(searchInput.value);
             });
         }
+
+        // Modal de Filtros Global
+        this.initFilterModal();
     },
 
     performSearch(term) {
         const cleanTerm = term.trim();
         if (cleanTerm) {
             Storage.saveSearchTerm(cleanTerm);
+            // Mantém os filtros atuais se existirem na URL, senão apenas busca
             window.location.href = `resultados.html?search=${encodeURIComponent(cleanTerm)}`;
+        }
+    },
+
+    initFilterModal() {
+        const modal = document.getElementById('filters-modal');
+        const openBtn = document.getElementById('open-filters-btn');
+        const closeBtn = document.querySelector('.close-modal');
+        const applyBtn = document.getElementById('apply-filters-btn');
+
+        if (!modal || !openBtn) return;
+
+        openBtn.addEventListener('click', () => {
+            modal.style.display = 'block';
+            // Tenta preencher valores da URL atual se estivermos em resultados
+            const urlParams = new URLSearchParams(window.location.search);
+            const genre = document.getElementById('genre-filter');
+            const platform = document.getElementById('platform-filter');
+            const year = document.getElementById('year-filter');
+
+            if (genre && urlParams.get('genre')) genre.value = urlParams.get('genre');
+            if (platform && urlParams.get('platform')) platform.value = urlParams.get('platform');
+            if (year && urlParams.get('year')) year.value = urlParams.get('year');
+        });
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+        }
+
+        window.addEventListener('click', (event) => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        if (applyBtn) {
+            applyBtn.addEventListener('click', () => {
+                const genre = document.getElementById('genre-filter').value;
+                const platform = document.getElementById('platform-filter').value;
+                const year = document.getElementById('year-filter').value;
+                const searchInput = document.getElementById('search-input');
+                const currentSearch = searchInput ? searchInput.value : (new URLSearchParams(window.location.search).get('search') || '');
+
+                // Monta URL com parâmetros
+                const params = new URLSearchParams();
+                if (currentSearch) params.set('search', currentSearch);
+                if (genre) params.set('genre', genre);
+                if (platform) params.set('platform', platform);
+                if (year) params.set('year', year);
+
+                window.location.href = `resultados.html?${params.toString()}`;
+            });
         }
     }
 };

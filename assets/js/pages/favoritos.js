@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!favoritesList) return;
 
+    // CORREÇÃO 3: Garantir classe de grid correta
+    favoritesList.className = 'game-list';
+
     try {
         const favorites = Storage.getFavorites();
 
@@ -19,7 +22,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         favoritesList.innerHTML = '<p>Carregando favoritos...</p>';
 
-        // Carrega detalhes de cada jogo favoritado
         const games = [];
         for (const gameId of favorites) {
             const game = await api.getGameById(gameId);
@@ -32,6 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             favoritesList.style.display = 'grid';
             emptyMessage.style.display = 'none';
+            // UI.createGameCard no main.js agora lida com os objetos de plataforma corretamente
             favoritesList.innerHTML = games
                 .map(game => UI.createGameCard(game))
                 .join('');
