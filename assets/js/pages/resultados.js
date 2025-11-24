@@ -3,37 +3,37 @@
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Estado da Página
     let currentPage = 1;
     const pageSize = 20;
     let totalResults = 0;
     let currentFilters = {};
 
-    // Elementos DOM
     const resultsList = document.getElementById('results-list');
     const emptyResults = document.getElementById('empty-results');
-    const paginationContainer = document.getElementById('pagination-controls'); // Novo container
+    const paginationContainer = document.getElementById('pagination-controls');
     const searchTitle = document.getElementById('search-term');
     
-    // Elementos do Modal de Filtros
+    // Elementos do Modal
     const genreFilter = document.getElementById('genre-filter');
     const platformFilter = document.getElementById('platform-filter');
     const yearFilter = document.getElementById('year-filter');
     const applyBtn = document.getElementById('apply-filters-btn');
     const modal = document.getElementById('filters-modal');
+    const openBtn = document.getElementById('open-filters-btn');
+    const closeBtn = document.querySelector('.close-modal');
 
     // Lê parâmetros iniciais da URL
     const urlParams = new URLSearchParams(window.location.search);
     currentFilters = {
         search: urlParams.get('search') || '',
         genre: urlParams.get('genre') || '',
-        platform: urlParams.get('platform') || '', // Nota: Idealmente seriam IDs
+        platform: urlParams.get('platform') || '',
         year: urlParams.get('year') || ''
     };
     currentPage = parseInt(urlParams.get('page')) || 1;
 
-    // Sincroniza UI com filtros iniciais
-    if (searchTitle) searchTitle.textContent = currentFilters.search || 'Todos os Jogos';
+    // Sincroniza UI
+    if (searchTitle) searchTitle.textContent = currentFilters.search || 'Filtros Aplicados';
     if (document.getElementById('search-input')) document.getElementById('search-input').value = currentFilters.search;
     if (genreFilter) genreFilter.value = currentFilters.genre;
     if (platformFilter) platformFilter.value = currentFilters.platform;
@@ -46,12 +46,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!resultsList) return;
         
         resultsList.innerHTML = '<div class="loading-spinner">Carregando jogos...</div>';
-        resultsList.style.display = 'block'; // Remove grid temporariamente para loading
+        resultsList.style.display = 'block';
         emptyResults.style.display = 'none';
-        renderPagination(); // Limpa paginação antiga
+        if(paginationContainer) paginationContainer.innerHTML = '';
 
         try {
-            // Chama a API com todos os filtros e página atual
+            // CORREÇÃO 4: Chama a API com todos os filtros combinados
             const response = await api.getFilteredGames(currentFilters, currentPage, pageSize);
             
             const games = response.results;
@@ -61,22 +61,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 resultsList.style.display = 'none';
                 emptyResults.style.display = 'block';
                 if (emptyResults.querySelector('h3')) {
-                    emptyResults.querySelector('h3').textContent = "Nenhum jogo encontrado.";
+                    emptyResults.querySelector('h3').textContent = "Nenhum jogo encontrado com esses filtros.";
                 }
                 return;
             }
 
-            // Renderiza Cards
+            // Renderiza Cards (Sem filtragem extra no cliente)
             resultsList.style.display = 'grid';
             resultsList.className = 'game-list';
             resultsList.innerHTML = games
                 .map(game => UI.createGameCard(game))
                 .join('');
 
-            // Renderiza Controles de Paginação Atualizados
             renderPagination();
             
-            // Scroll suave para o topo dos resultados
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
         } catch (error) {
@@ -85,20 +83,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    /**
-     * Renderiza Botões de Paginação
-     */
     function renderPagination() {
         if (!paginationContainer) return;
         paginationContainer.innerHTML = '';
 
-        if (totalResults <= pageSize) return; // Não precisa de paginação
+        if (totalResults <= pageSize) return;
 
         const totalPages = Math.ceil(totalResults / pageSize);
-        // Limita o número máximo de páginas visíveis para não quebrar a API (RAWG limita offsets muito altos as vezes)
         const maxPages = Math.min(totalPages, 100); 
 
-        // Botão Anterior
         const prevBtn = document.createElement('button');
         prevBtn.className = 'page-btn';
         prevBtn.innerHTML = '&#10094; Anterior';
@@ -106,13 +99,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         prevBtn.onclick = () => changePage(currentPage - 1);
         paginationContainer.appendChild(prevBtn);
 
-        // Texto "Página X de Y" (Simplificado para mobile)
         const info = document.createElement('span');
         info.className = 'page-info';
         info.textContent = `Página ${currentPage}`;
         paginationContainer.appendChild(info);
 
-        // Botão Próximo
         const nextBtn = document.createElement('button');
         nextBtn.className = 'page-btn';
         nextBtn.innerHTML = 'Próximo &#10095;';
@@ -121,9 +112,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         paginationContainer.appendChild(nextBtn);
     }
 
-    /**
-     * Muda a página e atualiza a URL sem recarregar tudo (se possível)
-     */
     function changePage(newPage) {
         if (newPage < 1) return;
         currentPage = newPage;
@@ -131,9 +119,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         fetchAndRender();
     }
 
-    /**
-     * Atualiza a URL do navegador para permitir compartilhamento/favoritos
-     */
     function updateURL() {
         const params = new URLSearchParams();
         if (currentFilters.search) params.set('search', currentFilters.search);
@@ -146,27 +131,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.history.pushState({ path: newUrl }, '', newUrl);
     }
 
-    // --- Eventos ---
+    // --- Controles do Modal ---
+    if (openBtn && modal) {
+        openBtn.addEventListener('click', () => { modal.style.display = 'block'; });
+    }
+    if (closeBtn && modal) {
+        closeBtn.addEventListener('click', () => { modal.style.display = 'none'; });
+    }
+    window.addEventListener('click', (event) => {
+        if (event.target == modal) modal.style.display = 'none';
+    });
 
-    // Aplica Filtros do Modal
     if (applyBtn) {
         applyBtn.addEventListener('click', () => {
-            // Atualiza filtros globais
             currentFilters.genre = genreFilter.value;
             currentFilters.platform = platformFilter.value;
             currentFilters.year = yearFilter.value;
             
-            // Reseta para página 1
+            // Se usou filtro, pode querer limpar a busca textual antiga ou mantê-la.
+            // Aqui mantemos a busca textual se o input da navbar não foi alterado.
+            const navSearch = document.getElementById('search-input');
+            if(navSearch) currentFilters.search = navSearch.value;
+
             currentPage = 1;
-            
             updateURL();
             fetchAndRender();
-            
-            // Fecha modal
             if (modal) modal.style.display = 'none';
         });
     }
 
-    // Inicialização
     fetchAndRender();
 });

@@ -2,10 +2,7 @@
  * detalhes.js - Página de Detalhes do Jogo (Estrutura Completa RAWG)
  */
 
-// ==================================================================
-// FUNÇÕES DE RENDERIZAÇÃO
-// ==================================================================
-
+// ... (formatList e renderMainInfo mantidos) ...
 function formatList(items, key = 'name') {
     if (!items || items.length === 0) return 'N/A';
     if (items[0].platform) {
@@ -14,7 +11,6 @@ function formatList(items, key = 'name') {
     return items.map(item => item[key]).join(', ');
 }
 
-// ... (renderMainInfo, renderDescription, renderAdditionalData, renderGallery mantidos iguais) ...
 function renderMainInfo(game) {
     document.title = `Gamepedia | ${game.name}`;
     document.getElementById('game-title').textContent = game.name;
@@ -34,7 +30,11 @@ function renderMainInfo(game) {
     }
     document.getElementById('genres').textContent = formatList(game.genres);
     document.getElementById('platforms').textContent = formatList(game.platforms);
-    document.getElementById('release-date').textContent = new Date(game.released).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+    
+    // Safe Date parsing
+    const releaseDate = game.released ? new Date(game.released).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'N/A';
+    document.getElementById('release-date').textContent = releaseDate;
+    
     document.getElementById('developers').textContent = formatList(game.developers);
     document.getElementById('publishers').textContent = formatList(game.publishers);
 }
@@ -69,20 +69,14 @@ function renderGallery(screenshots) {
     ).join('');
 }
 
-// 2. Renderização de Trailers (Vídeos MP4)
 function renderTrailers(movies) {
-    // Busca o container pelo ID solicitado: 'trailers-container'
-    // Nota: O ID no HTML pode variar, estou ajustando para procurar pelo container correto na DOM
-    // Caso o HTML use outro ID, o código abaixo tenta encontrar pelo nome usado na estrutura anterior também.
     const list = document.getElementById('trailers-list') || document.getElementById('trailers-container');
-    
     if (!list) return;
 
     if (!movies || movies.length === 0) {
         list.innerHTML = "<p>Nenhum trailer disponível para este jogo.</p>";
         return;
     }
-    
     list.innerHTML = movies.map(video => `
         <div class="trailer-item" style="margin-bottom: 20px;">
             <h4 style="margin-bottom: 10px;">${video.name}</h4>
@@ -109,39 +103,42 @@ function renderReviews(game, reviews) {
     } else {
         breakdownContainer.innerHTML = "<p>Sem breakdown de notas.</p>";
     }
+    
     const reviewsContainer = document.getElementById('user-reviews');
     if (!reviews || reviews.length === 0) {
         reviewsContainer.innerHTML = "<p>Nenhum review de usuário encontrado.</p>";
         return;
     }
-    reviewsContainer.innerHTML = reviews.map(review => `
+    
+    // CORREÇÃO 1: Tratamento de erro para usuário nulo
+    reviewsContainer.innerHTML = reviews.map(review => {
+        const username = review.user ? review.user.username : 'Usuário Anônimo';
+        const rating = review.rating || '?';
+        const text = review.text || ''; // RAWG às vezes retorna reviews sem texto
+        // Só renderiza se tiver texto, para não poluir
+        if(!text) return '';
+        
+        return `
         <div class="user-review">
-            <strong>${review.user.username} (Nota: ${review.rating})</strong>
-            <p>${review.text}</p>
+            <strong>${username} (Nota: ${rating})</strong>
+            <p>${text}</p>
         </div>
-    `).join('');
+    `}).join('');
 }
 
-// 3. Renderização de Jogos Similares
 function renderSimilarGames(similarGames) {
-    // Busca o container pelo ID solicitado: 'similar-games-container'
     const grid = document.getElementById('similar-games-grid') || document.getElementById('similar-games-container');
-    
     if (!grid) return;
 
     if (!similarGames || similarGames.length === 0) {
         grid.innerHTML = "<p>Nenhum jogo similar encontrado.</p>";
         return;
     }
-    
-    // Reutiliza a função de card do main.js (UI.createGameCard)
     grid.innerHTML = similarGames.map(game => {
-        // Prepara objeto compatível com UI.createGameCard
         const gameData = {
             id: game.id,
             name: game.name,
-            cover_url: game.background_image, // RAWG property
-            background_image: game.background_image, // Backup
+            cover_url: game.background_image, 
             rating: game.rating,
             platforms: game.platforms ? game.platforms.map(p => p.platform.name) : ['N/A']
         };
@@ -177,8 +174,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             api.getSimilarGames(gameId)
         ]);
 
+        // CORREÇÃO 1: Verifica se gameData existe antes de prosseguir
         if (!gameData) {
-            throw new Error('Jogo não encontrado.');
+            throw new Error('Jogo não encontrado na API.');
         }
 
         renderMainInfo(gameData);
@@ -189,12 +187,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderReviews(gameData, reviews);
         renderSimilarGames(similarGames);
 
+        // Botão de Favoritos
         const favoriteBtn = document.getElementById('favorite-toggle');
         const favoriteIcon = document.getElementById('favorite-icon');
 
         function updateFavoriteButton() {
             const isFav = Storage.isFavorited(gameId);
-            favoriteIcon.textContent = isFav ? '❤️' : '🤍';
+            if(favoriteIcon) favoriteIcon.textContent = isFav ? '❤️' : '🤍';
         }
 
         updateFavoriteButton();
