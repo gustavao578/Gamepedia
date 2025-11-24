@@ -1,12 +1,61 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@400;500;600;700&display=swap');
 
 /* ==================================================================
-   CSS RESET E BASE GLOBAL
+   PAGINAÇÃO
    ================================================================== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin: 40px 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--card-border);
+}
+
+.page-btn {
+    background-color: var(--secondary-bg);
+    color: var(--primary-text);
+    border: 1px solid var(--card-border);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-info {
+    font-weight: 600;
+    color: var(--color-text-secondary);
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    text-align: center;
+    padding: 40px;
+    font-size: 1.2rem;
+    color: var(--accent-color);
+    font-weight: bold;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
 }
 
 html, body {
@@ -196,6 +245,24 @@ h1, h2 {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 25px;
     margin-bottom: 40px;
+    width: 100%; /* Garante largura total */
+}
+
+/* Garante que a lista de resultados use o grid corretamente */
+#results-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+    width: 100%;
+}
+
+/* Estilo de mensagem de carregamento/erro dentro da lista */
+#results-list p {
+    grid-column: 1 / -1; /* Ocupa toda a largura */
+    text-align: center;
+    font-size: 1.2em;
+    color: var(--color-text-secondary);
+    padding: 40px 0;
 }
 
 .game-card {

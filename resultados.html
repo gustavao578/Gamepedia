@@ -11,13 +11,13 @@
     <header id="global-header">
         <div class="container header-content">
             <a href="index.html" class="marca">
-                <img src="assets/images/logo.svg" alt="Gamepedia Logo" class="logo">
+                <img src="assets/images/Logo.png" alt="Gamepedia Logo" class="logo">
                 Gamepedia
             </a>
             
             <form id="search-form" class="search-bar">
                 <input type="text" id="search-input" placeholder="Buscar jogos..." required aria-label="Buscar jogos">
-                <button type="submit" aria-label="Pesquisar">🔍</button>
+                <button type="submit" aria-label="Pesquisar">Buscar</button>
             </form>
 
             <nav>
@@ -30,21 +30,29 @@
             </nav>
         </div>
     </header>
-
+<br><br><br><Br>
     <main class="container">
         <h1 id="search-title">Resultados para: <span id="search-term">...</span></h1>
 
+        <!-- Lista de Resultados -->
         <section id="results-list" class="game-list">
-            <h3>Carregando resultados...</h3>
+            <p>Carregando resultados...</p>
         </section>
 
+        <!-- Mensagem de Vazio -->
         <div id="empty-results" style="display: none; text-align: center; padding: 50px;">
             <h3>Nenhum jogo encontrado!</h3>
             <p>Tente buscar por outro termo ou ajuste os filtros.</p>
             <a href="index.html" style="color: var(--accent-color); font-weight: bold; margin-top: 15px; display: inline-block;">← Voltar ao Início</a>
         </div>
+
+        <!-- CONTROLES DE PAGINAÇÃO (Novo) -->
+        <div id="pagination-controls" class="pagination-container">
+            <!-- JS vai injetar botões aqui -->
+        </div>
     </main>
 
+    <!-- Modal de Filtros -->
     <div id="filters-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -52,35 +60,38 @@
             
             <div class="filter-group">
                 <label for="genre-filter">Gênero</label>
+                <!-- Values devem ser 'slugs' da RAWG -->
                 <select id="genre-filter">
                     <option value="">Todos os Gêneros</option>
-                    <option value="RPG">RPG</option>
-                    <option value="Action">Ação</option>
-                    <option value="Strategy">Estratégia</option>
-                    <option value="Racing">Corrida</option>
-                    <option value="Indie">Indie</option>
-                    <option value="Adventure">Aventura</option>
-                    <option value="Shooter">Shooter</option>
-                    <option value="Puzzle">Puzzle</option>
+                    <option value="action">Ação</option>
+                    <option value="adventure">Aventura</option>
+                    <option value="rpg">RPG</option>
+                    <option value="strategy">Estratégia</option>
+                    <option value="shooter">Shooter</option>
+                    <option value="racing">Corrida</option>
+                    <option value="sports">Esportes</option>
+                    <option value="indie">Indie</option>
+                    <option value="puzzle">Puzzle</option>
                 </select>
             </div>
 
             <div class="filter-group">
                 <label for="platform-filter">Plataforma</label>
+                <!-- Nota: Filtro por plataforma textual é limitado na API gratuita sem IDs exatos -->
                 <select id="platform-filter">
                     <option value="">Todas as Plataformas</option>
-                    <option value="PC">PC (Windows)</option>
-                    <option value="PlayStation">PlayStation</option>
-                    <option value="Xbox">Xbox</option>
-                    <option value="Switch">Nintendo Switch</option>
-                    <option value="Linux">Linux</option>
-                    <option value="macOS">macOS</option>
+                    <option value="pc">PC</option>
+                    <option value="playstation4">PlayStation 4</option>
+                    <option value="playstation5">PlayStation 5</option>
+                    <option value="xbox-one">Xbox One</option>
+                    <option value="xbox-series-x">Xbox Series X</option>
+                    <option value="nintendo-switch">Nintendo Switch</option>
                 </select>
             </div>
 
             <div class="filter-group">
                 <label for="year-filter">Ano de Lançamento</label>
-                <input type="number" id="year-filter" class="date-input" placeholder="Ex: 2020" min="1950" max="2030">
+                <input type="number" id="year-filter" class="date-input" placeholder="Ex: 2023" min="1980" max="2030">
             </div>
 
             <button id="apply-filters-btn" class="btn-apply-filters">Aplicar Filtros</button>

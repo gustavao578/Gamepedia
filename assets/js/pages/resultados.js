@@ -1,118 +1,172 @@
 /**
- * resultados.js - Página de Resultados de Busca (Corrigido)
+ * resultados.js - Busca, Filtros e Paginação (Server-Side Logic)
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const searchTerm = urlParams.get('search') || '';
-    
-    // Parâmetros de filtro iniciais via URL
-    const initialGenre = urlParams.get('genre') || '';
-    const initialPlatform = urlParams.get('platform') || '';
-    const initialYear = urlParams.get('year') || '';
+    // Estado da Página
+    let currentPage = 1;
+    const pageSize = 20;
+    let totalResults = 0;
+    let currentFilters = {};
 
-    const searchInput = document.getElementById('search-input');
+    // Elementos DOM
     const resultsList = document.getElementById('results-list');
     const emptyResults = document.getElementById('empty-results');
+    const paginationContainer = document.getElementById('pagination-controls'); // Novo container
+    const searchTitle = document.getElementById('search-term');
     
-    // Inputs do Modal (para sincronizar)
+    // Elementos do Modal de Filtros
     const genreFilter = document.getElementById('genre-filter');
     const platformFilter = document.getElementById('platform-filter');
     const yearFilter = document.getElementById('year-filter');
+    const applyBtn = document.getElementById('apply-filters-btn');
+    const modal = document.getElementById('filters-modal');
 
-    // Elementos de exibição
-    const searchTitle = document.getElementById('search-title');
-    const searchTermSpan = document.getElementById('search-term');
+    // Lê parâmetros iniciais da URL
+    const urlParams = new URLSearchParams(window.location.search);
+    currentFilters = {
+        search: urlParams.get('search') || '',
+        genre: urlParams.get('genre') || '',
+        platform: urlParams.get('platform') || '', // Nota: Idealmente seriam IDs
+        year: urlParams.get('year') || ''
+    };
+    currentPage = parseInt(urlParams.get('page')) || 1;
 
-    if (!resultsList) return;
+    // Sincroniza UI com filtros iniciais
+    if (searchTitle) searchTitle.textContent = currentFilters.search || 'Todos os Jogos';
+    if (document.getElementById('search-input')) document.getElementById('search-input').value = currentFilters.search;
+    if (genreFilter) genreFilter.value = currentFilters.genre;
+    if (platformFilter) platformFilter.value = currentFilters.platform;
+    if (yearFilter) yearFilter.value = currentFilters.year;
 
-    // Preenche UI com valores atuais
-    if(searchTermSpan) searchTermSpan.textContent = searchTerm || 'Todos os Jogos';
-    if (searchInput) searchInput.value = searchTerm;
-    
-    if (genreFilter) genreFilter.value = initialGenre;
-    if (platformFilter) platformFilter.value = initialPlatform;
-    if (yearFilter) yearFilter.value = initialYear;
-
-    let allResults = []; 
-
-    async function renderResults() {
-        resultsList.innerHTML = '<p>Carregando resultados...</p>';
+    /**
+     * Função Principal: Busca e Renderiza
+     */
+    async function fetchAndRender() {
+        if (!resultsList) return;
+        
+        resultsList.innerHTML = '<div class="loading-spinner">Carregando jogos...</div>';
+        resultsList.style.display = 'block'; // Remove grid temporariamente para loading
         emptyResults.style.display = 'none';
-        // Garante que o container use o grid definido no CSS
-        resultsList.style.display = 'grid';
-        // Remove classes antigas que podem atrapalhar e adiciona a classe correta
-        resultsList.className = 'game-list'; 
+        renderPagination(); // Limpa paginação antiga
 
         try {
-            // Se não tiver resultados em cache, busca na API
-            if (allResults.length === 0) {
-                if (searchTerm) {
-                    allResults = await api.searchGames(searchTerm);
-                } else {
-                    // Se não tem termo de busca, traz populares para não ficar vazio
-                    allResults = await api.getPopularGames(20); 
-                }
-            }
+            // Chama a API com todos os filtros e página atual
+            const response = await api.getFilteredGames(currentFilters, currentPage, pageSize);
+            
+            const games = response.results;
+            totalResults = response.count;
 
-            if (!allResults || allResults.length === 0) {
+            if (!games || games.length === 0) {
                 resultsList.style.display = 'none';
                 emptyResults.style.display = 'block';
-                // Atualiza texto se a busca original não retornou nada
                 if (emptyResults.querySelector('h3')) {
-                     emptyResults.querySelector('h3').textContent = "Nenhum jogo encontrado.";
+                    emptyResults.querySelector('h3').textContent = "Nenhum jogo encontrado.";
                 }
                 return;
             }
 
-            // Pega valores atuais dos inputs (caso o modal tenha sido alterado sem reload)
-            // ou usa os da URL se o modal não estiver aberto
-            const selectedGenre = genreFilter ? genreFilter.value : initialGenre;
-            const selectedPlatform = platformFilter ? platformFilter.value : initialPlatform;
-            const selectedYear = yearFilter ? yearFilter.value : initialYear;
+            // Renderiza Cards
+            resultsList.style.display = 'grid';
+            resultsList.className = 'game-list';
+            resultsList.innerHTML = games
+                .map(game => UI.createGameCard(game))
+                .join('');
 
-            const filteredResults = allResults.filter(game => {
-                // Filtro de Gênero (case insensitive)
-                const matchGenre = !selectedGenre || 
-                                 (game.genres && game.genres.some(g => g.toLowerCase() === selectedGenre.toLowerCase()));
+            // Renderiza Controles de Paginação Atualizados
+            renderPagination();
+            
+            // Scroll suave para o topo dos resultados
+            window.scrollTo({ top: 0, behavior: 'smooth' });
 
-                // Filtro de Plataforma (case insensitive)
-                const matchPlatform = !selectedPlatform ||
-                                    (game.platforms && game.platforms.some(p => p.toLowerCase().includes(selectedPlatform.toLowerCase())));
-
-                // Filtro de Ano
-                let matchYear = true;
-                if (selectedYear && game.release_date) {
-                    // release_date vem como "2015-05-18"
-                    const gameYear = game.release_date.split('-')[0];
-                    matchYear = gameYear === selectedYear;
-                } else if (selectedYear && !game.release_date) {
-                    matchYear = false; // Se tem filtro de ano mas jogo não tem data, exclui
-                }
-
-                return matchGenre && matchPlatform && matchYear;
-            });
-
-            if (filteredResults.length === 0) {
-                resultsList.style.display = 'none';
-                emptyResults.style.display = 'block';
-                if (emptyResults.querySelector('h3')) {
-                    emptyResults.querySelector('h3').textContent = "Nenhum jogo encontrado com esses filtros.";
-                }
-            } else {
-                resultsList.style.display = 'grid';
-                emptyResults.style.display = 'none';
-                // Renderiza os cards usando a função UI global (main.js)
-                resultsList.innerHTML = filteredResults
-                    .map(game => UI.createGameCard(game))
-                    .join('');
-            }
         } catch (error) {
-            console.error('Erro na busca:', error);
-            resultsList.innerHTML = '<p>Erro ao buscar jogos. Tente novamente.</p>';
-            resultsList.style.display = 'block'; // Para mostrar a mensagem de erro
+            console.error('Erro ao buscar:', error);
+            resultsList.innerHTML = '<p class="error-msg">Erro ao carregar jogos. Tente novamente.</p>';
         }
     }
 
-    renderResults();
+    /**
+     * Renderiza Botões de Paginação
+     */
+    function renderPagination() {
+        if (!paginationContainer) return;
+        paginationContainer.innerHTML = '';
+
+        if (totalResults <= pageSize) return; // Não precisa de paginação
+
+        const totalPages = Math.ceil(totalResults / pageSize);
+        // Limita o número máximo de páginas visíveis para não quebrar a API (RAWG limita offsets muito altos as vezes)
+        const maxPages = Math.min(totalPages, 100); 
+
+        // Botão Anterior
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'page-btn';
+        prevBtn.innerHTML = '&#10094; Anterior';
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => changePage(currentPage - 1);
+        paginationContainer.appendChild(prevBtn);
+
+        // Texto "Página X de Y" (Simplificado para mobile)
+        const info = document.createElement('span');
+        info.className = 'page-info';
+        info.textContent = `Página ${currentPage}`;
+        paginationContainer.appendChild(info);
+
+        // Botão Próximo
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'page-btn';
+        nextBtn.innerHTML = 'Próximo &#10095;';
+        nextBtn.disabled = currentPage >= maxPages;
+        nextBtn.onclick = () => changePage(currentPage + 1);
+        paginationContainer.appendChild(nextBtn);
+    }
+
+    /**
+     * Muda a página e atualiza a URL sem recarregar tudo (se possível)
+     */
+    function changePage(newPage) {
+        if (newPage < 1) return;
+        currentPage = newPage;
+        updateURL();
+        fetchAndRender();
+    }
+
+    /**
+     * Atualiza a URL do navegador para permitir compartilhamento/favoritos
+     */
+    function updateURL() {
+        const params = new URLSearchParams();
+        if (currentFilters.search) params.set('search', currentFilters.search);
+        if (currentFilters.genre) params.set('genre', currentFilters.genre);
+        if (currentFilters.platform) params.set('platform', currentFilters.platform);
+        if (currentFilters.year) params.set('year', currentFilters.year);
+        if (currentPage > 1) params.set('page', currentPage);
+        
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+    }
+
+    // --- Eventos ---
+
+    // Aplica Filtros do Modal
+    if (applyBtn) {
+        applyBtn.addEventListener('click', () => {
+            // Atualiza filtros globais
+            currentFilters.genre = genreFilter.value;
+            currentFilters.platform = platformFilter.value;
+            currentFilters.year = yearFilter.value;
+            
+            // Reseta para página 1
+            currentPage = 1;
+            
+            updateURL();
+            fetchAndRender();
+            
+            // Fecha modal
+            if (modal) modal.style.display = 'none';
+        });
+    }
+
+    // Inicialização
+    fetchAndRender();
 });
