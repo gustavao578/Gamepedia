@@ -70,6 +70,9 @@ body {
     background-color: var(--primary-bg);
     color: var(--primary-text);
     transition: background-color 0.3s ease, color 0.3s ease;
+    /* ===== NAVBAR & FOOTER LAYOUT FIXES ===== */
+    /* Keep minimal and isolated: only adjust navbar/footer layout and page flow. */
+    min-height: 100vh;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -124,19 +127,24 @@ header {
     padding: 15px 0;
     position: fixed;
     top: 0;
+    left: 0;
     width: 100%;
-    z-index: 1000;
+    z-index: 1100;
+    height: var(--header-height, 72px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    height: 80px; /* Altura fixa para cálculo do main */
-    display: flex;
-    align-items: center;
+    display: block;
 }
 
 header .header-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 15px;
+    gap: 16px;
+    padding: 0 18px;
+    height: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
 }
 
 header .marca {
@@ -156,7 +164,8 @@ header .marca {
 header nav {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 12px;
+    height: 100%;
 }
 
 header nav a {
@@ -198,6 +207,8 @@ header nav a:hover {
     max-width: 400px;
     display: flex;
     align-items: center;
+    gap: 8px;
+    height: calc(var(--header-height, 72px) - 18px); /* keep inner control shorter than header */
 }
 
 .search-bar input {
@@ -209,6 +220,8 @@ header nav a:hover {
     background: var(--primary-bg);
     color: var(--primary-text);
     outline: none;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 .search-bar button {
@@ -220,15 +233,37 @@ header nav a:hover {
     color: white;
     cursor: pointer;
     font-weight: 600;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 /* ==================================================================
    MAIN CONTENT (Fix Footer)
    ================================================================== */
 main {
-    padding-top: 100px; /* Espaço para header */
+    padding-top: calc(var(--header-height, 72px) + 1rem); /* fallback header height 72px */
     flex: 1 0 auto; /* Garante que o main cresça e empurre o footer */
     padding-bottom: 40px;
+}
+
+/* Small screens: allow header to expand height/flow vertically to avoid overflow of wrapped nav items */
+@media (max-width: 768px) {
+    header {
+        height: var(--header-mobile-height, 96px);
+    }
+    header .header-content {
+        padding: 8px 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .search-bar {
+        width: 100%;
+        margin: 6px 0;
+    }
+    main {
+        padding-top: calc(var(--header-mobile-height, 96px) + 1rem);
+    }
 }
 
 h1, h2 {
@@ -484,18 +519,41 @@ h1, h2 {
    FOOTER
    ================================================================== */
 footer {
-    flex-shrink: 0; /* Impede que o footer encolha */
-    background: var(--header-bg);
+    width: 100%;
+    box-sizing: border-box;
+    /* Let the page layout decide the vertical position due to body flex */
+    margin-top: 0;
+    padding: 16px 0;
+    flex-shrink: 0;
+
+    /* Restores footer background & text color according to the theme */
+    background: var(--header-bg, var(--secondary-bg));
+    color: var(--header-text, var(--primary-text));
+
+    /* subtle separation from content, using existing card-border variable */
     border-top: 1px solid var(--card-border);
-    padding: 30px 0;
-    margin-top: auto; /* Empurra para baixo */
-    z-index: 10;
+
+    /* small transition for theme changes */
+    transition: background 160ms ease-in-out, color 160ms ease-in-out;
 }
 
+/* Make sure internal footer text and links inherit the footer colors */
+.footer-content,
+footer small,
+footer a {
+    color: inherit;
+}
+
+/* Optional: keep footer content aligned like the rest of the site */
 .footer-content {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 18px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
 }
 
 /* ==================================================================
